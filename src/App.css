@@ -2416,3 +2416,767 @@ body {
     --dark: #F5F5F5;
   }
 }
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 768px) {
+  /* Base mobile adjustments */
+  body {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Header mobile optimization */
+  .header {
+    padding: 10px 15px;
+    min-height: auto;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .nav {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .nav-link {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    min-height: 44px; /* Touch-friendly minimum */
+  }
+
+  .user-email {
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 8px;
+    background: var(--light);
+    border-radius: 4px;
+  }
+
+  .logout-btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+
+  /* Main content mobile layout */
+  .main-content {
+    grid-template-columns: 1fr;
+    padding: 15px 10px;
+    gap: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Workout form mobile optimization */
+  .enhanced-workout-form-container {
+    padding: 15px;
+    margin: 0;
+    border-radius: 8px;
+  }
+
+  .enhanced-workout-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .enhanced-workout-header h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .enhanced-workout-header p {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  /* Exercise sections mobile */
+  .enhanced-exercise-section {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+
+  .enhanced-exercise-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .enhanced-exercise-name-input {
+    font-size: 1rem;
+    padding: 12px 16px;
+    min-height: 44px;
+  }
+
+  .enhanced-remove-exercise-btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    min-height: 44px;
+    width: 100%;
+  }
+
+  /* Sets container mobile */
+  .enhanced-sets-container {
+    gap: 10px;
+  }
+
+  .enhanced-sets-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .enhanced-sets-header h4 {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .status-legend {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .legend-item {
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* Set rows mobile */
+  .enhanced-set-row {
+    grid-template-columns: 40px 1fr 1fr 80px;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .enhanced-set-number {
+    font-size: 0.9rem;
+    min-width: 40px;
+  }
+
+  .enhanced-set-input {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    min-height: 36px;
+  }
+
+  .enhanced-set-actions {
+    gap: 4px;
+  }
+
+  .enhanced-type-btn {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+    min-height: 32px;
+  }
+
+  .enhanced-complete-btn {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+    min-height: 32px;
+  }
+
+  .enhanced-remove-set-btn {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+    min-height: 32px;
+  }
+
+  /* Form actions mobile */
+  .enhanced-form-actions {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn {
+    padding: 16px 20px;
+    font-size: 1rem;
+    min-height: 48px;
+    border-radius: 8px;
+  }
+
+  /* Timer mobile */
+  .workout-timer {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .timer-display {
+    font-size: 2rem;
+    padding: 10px;
+  }
+
+  .timer-controls {
+    gap: 10px;
+  }
+
+  .timer-control-btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    min-height: 44px;
+    border-radius: 6px;
+  }
+
+  /* Workout options mobile */
+  .workout-options {
+    padding: 15px 10px;
+  }
+
+  .workout-options-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .workout-options-header p {
+    font-size: 0.9rem;
+  }
+
+  .workout-option-cards {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .workout-option-card {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .workout-option-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .workout-option-card p {
+    font-size: 0.9rem;
+  }
+
+  .option-btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    min-height: 44px;
+    border-radius: 6px;
+  }
+
+  /* Templates mobile */
+  .templates-grid,
+  .previous-workouts-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .template-card,
+  .previous-workout-card {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .template-header h4 {
+    font-size: 1.1rem;
+  }
+
+  .template-description {
+    font-size: 0.9rem;
+  }
+
+  .template-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .use-template-btn,
+  .delete-template-btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    min-height: 44px;
+    border-radius: 6px;
+  }
+
+  /* Workout list mobile */
+  .jsonb-workout-card {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .jsonb-workout-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .jsonb-exercise-item {
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .jsonb-exercise-name {
+    font-size: 0.9rem;
+  }
+
+  .jsonb-set {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+
+  /* Auth page mobile */
+  .auth-page {
+    padding: 15px;
+  }
+
+  .app-title {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+  }
+
+  .auth-card {
+    padding: 25px 20px;
+    border-radius: 8px;
+  }
+
+  .auth-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .auth-header p {
+    font-size: 0.9rem;
+  }
+
+  .form-group input {
+    padding: 12px 16px;
+    font-size: 1rem;
+    min-height: 44px;
+    border-radius: 6px;
+  }
+
+  .auth-button {
+    padding: 16px 20px;
+    font-size: 1rem;
+    min-height: 48px;
+    border-radius: 8px;
+  }
+
+  /* Progress chart mobile */
+  .progress-chart {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .chart-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .exercise-select {
+    padding: 12px 16px;
+    font-size: 1rem;
+    min-height: 44px;
+    border-radius: 6px;
+  }
+
+  /* Template form mobile */
+  .create-template-form-container {
+    padding: 15px;
+  }
+
+  .create-template-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .template-name-input,
+  .template-description-input {
+    padding: 12px 16px;
+    font-size: 1rem;
+    min-height: 44px;
+    border-radius: 6px;
+  }
+
+  .template-set-row {
+    grid-template-columns: 40px 1fr 1fr 80px;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .set-input {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    min-height: 36px;
+  }
+
+  .template-form-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .add-exercise-btn,
+  .save-template-btn,
+  .cancel-btn {
+    padding: 16px 20px;
+    font-size: 1rem;
+    min-height: 48px;
+    border-radius: 8px;
+  }
+
+  /* Back button mobile */
+  .back-btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    min-height: 44px;
+    border-radius: 6px;
+  }
+}
+
+/* Extra small devices (phones, 375px and down) */
+@media (max-width: 375px) {
+  .main-content {
+    padding: 10px 5px;
+  }
+
+  .enhanced-workout-form-container,
+  .auth-card,
+  .workout-option-card,
+  .template-card,
+  .previous-workout-card,
+  .jsonb-workout-card {
+    padding: 15px 10px;
+  }
+
+  .enhanced-set-row {
+    grid-template-columns: 35px 1fr 1fr 70px;
+    gap: 6px;
+  }
+
+  .template-set-row {
+    grid-template-columns: 35px 1fr 1fr 70px;
+    gap: 6px;
+  }
+
+  .nav-link,
+  .logout-btn,
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn,
+  .auth-button {
+    font-size: 0.85rem;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-width: 768px) and (orientation: landscape) {
+  .header-content {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .main-content {
+    padding: 10px 15px;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .nav-link:hover,
+  .logout-btn:hover,
+  .enhanced-complete-btn:hover,
+  .enhanced-remove-set-btn:hover,
+  .enhanced-add-set-btn:hover,
+  .enhanced-add-exercise-btn:hover,
+  .enhanced-submit-workout-btn:hover,
+  .auth-button:hover,
+  .workout-option-card:hover,
+  .template-card:hover,
+  .previous-workout-card:hover,
+  .jsonb-workout-card:hover {
+    transform: none;
+  }
+
+  /* Increase touch targets */
+  .enhanced-type-btn,
+  .enhanced-complete-btn,
+  .enhanced-remove-set-btn {
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+}
+
+/* Enhanced Mobile Responsiveness - Better UX for set rows */
+@media (max-width: 768px) {
+  /* ... existing mobile styles ... */
+
+  /* Improved set rows - maintain horizontal layout but responsive */
+  .enhanced-set-row {
+    display: grid;
+    grid-template-columns: 50px 1fr 1fr 120px;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 6px;
+    background: #f9f9f9;
+    margin-bottom: 8px;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    align-items: center;
+  }
+
+  .enhanced-set-number {
+    font-size: 0.9rem;
+    padding: 6px 8px;
+    border-radius: 4px;
+    text-align: center;
+    background: #e0e0e0;
+    font-weight: 700;
+    min-width: 40px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .enhanced-set-input {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    min-height: 36px;
+    border-radius: 4px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .enhanced-set-actions {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .enhanced-type-btn,
+  .enhanced-complete-btn,
+  .enhanced-remove-set-btn {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+    min-height: 32px;
+    border-radius: 4px;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Make the sets header more compact */
+  .enhanced-sets-header {
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .enhanced-sets-header h4 {
+    font-size: 1rem;
+    margin: 0;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .status-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 2;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .legend-symbol {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  /* Exercise header - keep horizontal but responsive */
+  .enhanced-exercise-header {
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .enhanced-exercise-name-input {
+    font-size: 0.9rem;
+    padding: 10px 12px;
+    min-height: 40px;
+    border-radius: 4px;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .enhanced-remove-exercise-btn {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    min-height: 40px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* Add set button - keep it compact */
+  .enhanced-add-set-btn {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    min-height: 40px;
+    border-radius: 4px;
+    margin-top: 8px;
+    width: auto;
+    align-self: flex-start;
+  }
+
+  /* Form actions - keep horizontal but responsive */
+  .enhanced-form-actions {
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 15px 0;
+  }
+
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    min-height: 44px;
+    border-radius: 6px;
+    flex: 1;
+    min-width: 140px;
+  }
+}
+
+/* Small phones - adjust grid for very narrow screens */
+@media (max-width: 480px) {
+  .enhanced-set-row {
+    grid-template-columns: 40px 1fr 1fr 100px;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .enhanced-set-number {
+    font-size: 0.8rem;
+    padding: 4px 6px;
+    min-width: 32px;
+    height: 32px;
+  }
+
+  .enhanced-set-input {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    min-height: 32px;
+  }
+
+  .enhanced-type-btn,
+  .enhanced-complete-btn,
+  .enhanced-remove-set-btn {
+    padding: 4px 6px;
+    font-size: 0.6rem;
+    min-height: 28px;
+    min-width: 28px;
+  }
+
+  .enhanced-sets-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .enhanced-sets-header h4 {
+    text-align: center;
+  }
+
+  .status-legend {
+    justify-content: center;
+  }
+
+  .enhanced-exercise-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .enhanced-exercise-name-input {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .enhanced-remove-exercise-btn {
+    width: 100%;
+  }
+
+  .enhanced-form-actions {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+/* Extra small devices (phones, 375px and down) */
+@media (max-width: 375px) {
+  .enhanced-set-row {
+    grid-template-columns: 35px 1fr 1fr 90px;
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .enhanced-set-number {
+    font-size: 0.75rem;
+    padding: 3px 5px;
+    min-width: 28px;
+    height: 28px;
+  }
+
+  .enhanced-set-input {
+    padding: 4px 6px;
+    font-size: 0.75rem;
+    min-height: 28px;
+  }
+
+  .enhanced-type-btn,
+  .enhanced-complete-btn,
+  .enhanced-remove-set-btn {
+    padding: 3px 5px;
+    font-size: 0.55rem;
+    min-height: 24px;
+    min-width: 24px;
+  }
+}
