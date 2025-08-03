@@ -11,9 +11,9 @@ interface EnhancedWorkoutFormProps {
 }
 
 const SET_TYPE_CONFIG = {
-  regular: { symbol: '⚪', label: 'Regular' },
-  warmup: { symbol: '🔥', label: 'Warm Up' },
-  failure: { symbol: '⚡', label: 'To Failure' }
+  regular: { symbol: 'W/F', label: 'Set Type' },
+  warmup: { symbol: 'W', label: 'Warm Up' },
+  failure: { symbol: 'F', label: 'To Failure' }
 }
 
 export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({ 
@@ -313,6 +313,32 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
     }
   }
 
+  // Update the status legend to show gray checkmark for incomplete
+  const renderStatusLegend = () => (
+    <div className="status-legend">
+      <div className="legend-item completion-status">
+        <div className="legend-symbol default">W/F</div>
+        <span className="legend-label">Default</span>
+        <span className="legend-separator">|</span>
+        <div className="legend-symbol warmup">W</div>
+        <span className="legend-label">Warm-up</span>
+        <span className="legend-separator">|</span>
+        <div className="legend-symbol failure">F</div>
+        <span className="legend-label">Failure</span>
+      </div>
+      <div className="legend-item completion-status">
+        <div className="legend-symbol default-checkbox">✓</div>
+        <span className="legend-label">Incomplete</span>
+        <span className="legend-separator">|</span>
+        <div className="legend-symbol completed">✓</div>
+        <span className="legend-label">Completed</span>
+      </div>
+      <div className="legend-note">
+        Tap buttons to change set type or mark as completed
+      </div>
+    </div>
+  );
+
   return (
     <div className="enhanced-workout-form-container">
       {!isFreshWorkout && (
@@ -412,149 +438,136 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
           </div>
         )}
 
-        {exercises.map((exercise, exerciseIndex) => (
-          <div key={exerciseIndex} className="enhanced-exercise-section">
-            <div className="enhanced-exercise-header">
-              <input
-                type="text"
-                value={exercise.name}
-                onChange={(e) => updateExerciseName(exerciseIndex, e.target.value)}
-                placeholder="EXERCISE NAME (E.G., BENCH PRESS)"
-                className="enhanced-exercise-name-input"
-                disabled={loading}
-              />
-              <button
-                type="button"
-                onClick={() => removeExercise(exerciseIndex)}
-                className="enhanced-remove-exercise-btn"
-                disabled={loading}
-              >
-                REMOVE
-              </button>
-            </div>
-
-            <div className="enhanced-sets-container">
-              <div className="enhanced-sets-header">
-                <span>SET</span>
-                <span>WEIGHT (LBS)</span>
-                <span>REPS</span>
-                <span>
-                  TYPE & STATUS
+        {exercises.length === 0 ? (
+          <div className="empty-workout-state">
+            <h3>NO EXERCISES ADDED</h3>
+            <p>Add your first exercise to start tracking your workout</p>
+          </div>
+        ) : (
+          exercises.map((exercise, exerciseIndex) => (
+            <div key={exerciseIndex} className="enhanced-exercise-section">
+              <div className="enhanced-exercise-header">
+                <input
+                  type="text"
+                  value={exercise.name}
+                  onChange={(e) => updateExerciseName(exerciseIndex, e.target.value)}
+                  placeholder="EXERCISE NAME (E.G., BENCH PRESS)"
+                  disabled={loading}
+                  className="enhanced-exercise-name-input"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeExercise(exerciseIndex)}
+                  className="enhanced-remove-exercise-btn"
+                  disabled={loading}
+                  title="Remove Exercise"
+                >
+                  REMOVE
+                </button>
+              </div>
+              
+              <div className="enhanced-sets-container">
+                <div className="enhanced-sets-header">
+                  <h4>SET</h4>
+                  <h4>WEIGHT (LBS)</h4>
+                  <h4>REPS</h4>
+                  <h4>TYPE & STATUS</h4>
                   <button
                     type="button"
                     onClick={() => setShowHelp(!showHelp)}
                     className="help-btn"
+                    title="Help"
                   >
                     ?
                   </button>
-                </span>
-              </div>
-
-              {showHelp && (
-                <div className="status-legend">
-                  <h4>SET TYPES</h4>
-                  {Object.entries(SET_TYPE_CONFIG).map(([key, config]) => (
-                    <div key={key} className="legend-item">
-                      <span className="legend-symbol">{config.symbol}</span>
-                      <span className="legend-label">{config.label}</span>
-                    </div>
-                  ))}
-                  <h4>COMPLETION</h4>
-                  <div className="legend-item">
-                    <span className="legend-symbol">☐/✅</span>
-                    <span className="legend-label">Incomplete/Complete</span>
-                  </div>
-                  <p className="legend-note">Tap type symbol to cycle • Tap checkbox to complete</p>
                 </div>
-              )}
-
-              {exercise.sets.map((set, setIndex) => (
-                <div 
-                  key={setIndex} 
-                  className={`enhanced-set-row type-${set.type} ${set.completed ? 'completed' : ''}`}
-                >
-                  <span className="enhanced-set-number">{setIndex + 1}</span>
-                  
-                  <input
-                    type="number"
-                    value={set.weight || ''}
-                    onChange={(e) => {
-                      const rawValue = e.target.value
-                      console.log('Weight input raw value:', rawValue)
-                      const parsedValue = rawValue === '' ? 0 : Number(rawValue)
-                      console.log('Weight parsed value:', parsedValue)
-                      updateSet(exerciseIndex, setIndex, 'weight', parsedValue)
-                    }}
-                    placeholder="0"
-                    disabled={loading}
-                    step="0.25"
-                    min="0"
-                    className="enhanced-set-input"
-                  />
-                  
-                  <input
-                    type="number"
-                    value={set.reps || ''}
-                    onChange={(e) => {
-                      const rawValue = e.target.value
-                      console.log('Reps input raw value:', rawValue)
-                      const parsedValue = rawValue === '' ? 0 : Number(rawValue)
-                      console.log('Reps parsed value:', parsedValue)
-                      updateSet(exerciseIndex, setIndex, 'reps', parsedValue)
-                    }}
-                    placeholder="0"
-                    disabled={loading}
-                    min="0"
-                    className="enhanced-set-input"
-                  />
-                  
-                  <div className="enhanced-set-actions">
-                    <button
-                      type="button"
-                      onClick={() => cycleSetType(exerciseIndex, setIndex)}
-                      className={`enhanced-type-btn type-${set.type}`}
-                      disabled={loading}
-                      title={SET_TYPE_CONFIG[set.type].label}
-                    >
-                      {SET_TYPE_CONFIG[set.type].symbol}
-                    </button>
+                
+                {showHelp && renderStatusLegend()}
+                
+                {exercise.sets.map((set, setIndex) => (
+                  <div 
+                    key={setIndex} 
+                    className={`enhanced-set-row type-${set.type} ${set.completed ? 'completed' : ''}`}
+                  >
+                    <span className="enhanced-set-number">{setIndex + 1}</span>
                     
-                    <button
-                      type="button"
-                      onClick={() => toggleSetCompletion(exerciseIndex, setIndex)}
-                      className={`enhanced-complete-btn ${set.completed ? 'completed' : ''}`}
+                    <input
+                      type="number"
+                      value={set.weight || ''}
+                      onChange={(e) => {
+                        const rawValue = e.target.value
+                        const parsedValue = rawValue === '' ? 0 : Number(rawValue)
+                        updateSet(exerciseIndex, setIndex, 'weight', parsedValue)
+                      }}
+                      placeholder="0"
                       disabled={loading}
-                      title={set.completed ? 'Completed' : 'Mark Complete'}
-                    >
-                      {set.completed ? '✅' : '☐'}
-                    </button>
+                      min="0"
+                      className="enhanced-set-input"
+                    />
                     
-                    {exercise.sets.length > 1 && (
+                    <input
+                      type="number"
+                      value={set.reps || ''}
+                      onChange={(e) => {
+                        const rawValue = e.target.value
+                        const parsedValue = rawValue === '' ? 0 : Number(rawValue)
+                        updateSet(exerciseIndex, setIndex, 'reps', parsedValue)
+                      }}
+                      placeholder="0"
+                      disabled={loading}
+                      min="0"
+                      className="enhanced-set-input"
+                    />
+                    
+                    <div className="enhanced-set-actions">
                       <button
                         type="button"
-                        onClick={() => removeSet(exerciseIndex, setIndex)}
-                        className="enhanced-remove-set-btn"
+                        onClick={() => cycleSetType(exerciseIndex, setIndex)}
+                        className={`enhanced-type-btn type-${set.type}`}
                         disabled={loading}
+                        title={SET_TYPE_CONFIG[set.type].label}
                       >
-                        ✕
+                        {SET_TYPE_CONFIG[set.type].symbol}
                       </button>
-                    )}
+                      
+                      <button
+                        type="button"
+                        onClick={() => toggleSetCompletion(exerciseIndex, setIndex)}
+                        className={`enhanced-complete-btn ${set.completed ? 'completed' : ''}`}
+                        disabled={loading}
+                        title={set.completed ? 'Completed' : 'Mark Complete'}
+                      >
+                        ✓
+                      </button>
+                      
+                      {exercise.sets.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeSet(exerciseIndex, setIndex)}
+                          className="enhanced-remove-set-btn"
+                          disabled={loading}
+                          title="Remove Set"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-
-              <button
-                type="button"
-                onClick={() => addSet(exerciseIndex)}
-                className="enhanced-add-set-btn"
-                disabled={loading}
-              >
-                + ADD SET
-              </button>
+                ))}
+                
+                <button
+                  type="button"
+                  onClick={() => addSet(exerciseIndex)}
+                  className="enhanced-add-set-btn"
+                  disabled={loading}
+                >
+                  ADD SET
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-
+          ))
+        )}
+        
         <div className="enhanced-form-actions">
           <button
             type="button"
@@ -562,16 +575,18 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
             className="enhanced-add-exercise-btn"
             disabled={loading}
           >
-            + ADD EXERCISE
+            ADD EXERCISE
           </button>
-
-          <button 
-            type="submit" 
-            className="enhanced-submit-workout-btn"
-            disabled={loading || exercises.length === 0 || exercises.every(ex => !ex.name.trim())}
-          >
-            {loading ? 'SAVING...' : 'COMPLETE WORKOUT'}
-          </button>
+          
+          {exercises.length > 0 && exercises.some(ex => ex.name.trim()) && (
+            <button
+              type="submit"
+              className="enhanced-submit-workout-btn"
+              disabled={loading}
+            >
+              COMPLETE WORKOUT
+            </button>
+          )}
         </div>
       </form>
     </div>

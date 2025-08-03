@@ -322,9 +322,21 @@ body {
 
 /* Enhanced Workout Form - Professional Neo-Brutalist */
 .enhanced-workout-form-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
+  padding: 15px 10px;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.enhanced-workout-form {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .empty-workout {
@@ -682,8 +694,12 @@ body {
 }
 
 .enhanced-exercise-section {
-  padding: 30px;
-  margin-bottom: 30px;
+  background: #ffffff;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
 }
 
 .enhanced-exercise-section:hover {
@@ -700,30 +716,31 @@ body {
 
 .enhanced-exercise-name-input {
   flex: 1;
-  padding: 15px;
-  border: var(--border);
-  background: #f0f0f0;
+  padding: 12px 16px;
+  border: 2px solid #000;
+  border-radius: 4px;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  font-size: 1.1rem;
-  border-radius: 4px;
-  box-shadow: var(--shadow);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 1rem;
+  background: #ffffff;
+  color: #000;
+  width: 100%;
+  box-sizing: border-box;
   transition: all 0.2s ease;
-  color: #333;
 }
 
 .enhanced-exercise-name-input:focus {
   outline: none;
-  border-color: var(--primary);
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+  border-color: #FF8C00;
+  background: #fff8f0;
+  color: #000;
 }
 
 .enhanced-exercise-name-input::placeholder {
-  color: #aaa;
-  font-weight: 600;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 .enhanced-remove-exercise-btn {
@@ -757,97 +774,366 @@ body {
 
 .enhanced-sets-header {
   display: grid;
-  grid-template-columns: 60px 1fr 1fr 160px;
-  gap: 15px;
-  padding: 20px;
+  grid-template-columns: 50px 1fr 1fr 140px;
+  gap: 8px;
+  padding: 12px;
   background: #333;
-  color: white;
-  font-weight: 800;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  color: #fff;
   align-items: center;
+  border: 2px solid #000;
+  position: relative;
+}
+
+.enhanced-sets-header h4 {
+  font-size: 0.75rem;
+  margin: 0;
+  color: #fff;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
 }
 
 .help-btn {
-  background: var(--accent);
-  color: var(--dark);
-  border: 2px solid var(--dark);
+  background: #FFD700;
+  color: #000;
+  border: 2px solid #000;
   border-radius: 50%;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   font-weight: 800;
+  font-size: 0.7rem;
   cursor: pointer;
-  margin-left: 10px;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
 }
 
 .help-btn:hover {
-  transform: scale(1.2);
-  background: white;
+  background: #FFB366;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
 }
 
+/* Ensure the Type & Status text doesn't overlap with help button */
+.enhanced-sets-header h4:last-child {
+  padding-right: 30px;
+  text-align: left;
+}
+
+/* Updated Status Legend with horizontal completion status */
 .status-legend {
-  background: var(--accent);
-  padding: 20px;
-  border-bottom: var(--border);
+  background: #ffffff;
+  padding: 12px;
+  border: 3px solid #000;
+  border-radius: 8px;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
   animation: slideDown 0.3s ease;
-}
-
-.status-legend h4 {
-  font-weight: 800;
-  color: var(--dark);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 10px;
-  margin-top: 15px;
-}
-
-.status-legend h4:first-child {
-  margin-top: 0;
+  margin-top: 10px;
+  grid-column: 1 / -1;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 8px;
   font-weight: 700;
-  color: var(--dark);
+  color: #000;
+  font-size: 0.8rem;
+}
+
+.legend-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Special styling for the completion status line */
+.legend-item.completion-status {
+  justify-content: center;
+  gap: 15px;
+}
+
+.legend-separator {
+  color: #666;
+  font-weight: 400;
+  margin: 0 5px;
 }
 
 .legend-symbol {
-  font-size: 1.2rem;
-  width: 30px;
-  text-align: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.legend-symbol.warmup {
+  background: #FF8C00;
+  color: #fff;
+}
+
+.legend-symbol.failure {
+  background: #E76F51;
+  color: #fff;
+}
+
+.legend-symbol.completed {
+  background: #2A9D8F;
+  color: #fff;
+}
+
+.legend-symbol.default {
+  background: #f0f0f0;
+  color: #000;
 }
 
 .legend-label {
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  font-weight: 800;
+  flex: 1;
 }
 
 .legend-note {
-  margin-top: 15px;
+  margin-top: 8px;
   font-style: italic;
   font-weight: 600;
   text-align: center;
-  color: var(--secondary);
+  color: #666;
+  font-size: 0.75rem;
+  padding: 6px;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .status-legend {
+    padding: 10px;
+    margin-top: 8px;
+  }
+
+  .legend-item {
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+  }
+
+  .legend-item.completion-status {
+    gap: 12px;
+  }
+
+  .legend-separator {
+    margin: 0 3px;
+  }
+
+  .legend-symbol {
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+  }
+
+  .legend-note {
+    margin-top: 6px;
+    font-size: 0.7rem;
+    padding: 5px;
+  }
+
+  .help-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    right: 6px;
+  }
+
+  .enhanced-sets-header {
+    padding: 8px 32px 8px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-legend {
+    padding: 8px;
+    margin-top: 6px;
+  }
+
+  .legend-item {
+    gap: 6px;
+    margin-bottom: 5px;
+    font-size: 0.7rem;
+  }
+
+  .legend-item.completion-status {
+    gap: 10px;
+  }
+
+  .legend-separator {
+    margin: 0 2px;
+  }
+
+  .legend-symbol {
+    width: 16px;
+    height: 16px;
+    font-size: 0.6rem;
+  }
+
+  .legend-note {
+    margin-top: 5px;
+    font-size: 0.65rem;
+    padding: 4px;
+  }
+
+  .help-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+    right: 4px;
+  }
+
+  .enhanced-sets-header {
+    padding: 6px 28px 6px 6px;
+  }
+}
+
+@media (max-width: 375px) {
+  .status-legend {
+    padding: 6px;
+    margin-top: 5px;
+  }
+
+  .legend-item {
+    gap: 5px;
+    margin-bottom: 4px;
+    font-size: 0.65rem;
+  }
+
+  .legend-item.completion-status {
+    gap: 8px;
+  }
+
+  .legend-separator {
+    margin: 0 1px;
+  }
+
+  .legend-symbol {
+    width: 14px;
+    height: 14px;
+    font-size: 0.55rem;
+  }
+
+  .legend-note {
+    margin-top: 4px;
+    font-size: 0.6rem;
+    padding: 3px;
+  }
+
+  .help-btn {
+    width: 16px;
+    height: 16px;
+    font-size: 0.6rem;
+    right: 3px;
+  }
+
+  .enhanced-sets-header {
+    padding: 5px 24px 5px 5px;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .status-legend {
+    background: #2A2A2A;
+    border: 3px solid #555;
+  }
+
+  .legend-item {
+    color: #F5F5F5;
+  }
+
+  .legend-separator {
+    color: #999;
+  }
+
+  .legend-symbol.warmup {
+    background: #FF8C00;
+    color: #000;
+    border-color: #FF8C00;
+  }
+
+  .legend-symbol.failure {
+    background: #E76F51;
+    color: #F5F5F5;
+    border-color: #E76F51;
+  }
+
+  .legend-symbol.completed {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border-color: #2A9D8F;
+  }
+
+  .legend-symbol.default {
+    background: #333;
+    color: #F5F5F5;
+    border-color: #555;
+  }
+
+  .legend-note {
+    color: #CCCCCC;
+    background: #333;
+    border: 1px solid #555;
+  }
+
+  .help-btn {
+    background: #FFD700;
+    color: #000;
+    border: 2px solid #000;
+  }
+
+  .help-btn:hover {
+    background: #FFB366;
+  }
+}
+
+/* Animation for smooth appearance */
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; 
+    transform: translateY(-10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
 }
 
 .enhanced-set-row {
   display: grid;
-  grid-template-columns: 60px 1fr 1fr 160px;
-  gap: 15px;
-  padding: 20px;
-  border-bottom: 1px solid #eee;
+  grid-template-columns: 50px 1fr 1fr 140px;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 6px;
+  background: #ffffff;
+  margin-bottom: 8px;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
   align-items: center;
-  transition: all 0.2s ease;
+  min-height: 55px;
 }
 
 .enhanced-set-row:last-child {
@@ -870,145 +1156,138 @@ body {
 }
 
 .enhanced-set-number {
-  font-weight: 800;
-  color: #333;
-  text-align: center;
-  font-size: 1.2rem;
-  background: #f0f0f0;
-  border: 2px solid var(--dark);
+  font-size: 0.85rem;
+  padding: 6px 8px;
   border-radius: 4px;
-  padding: 8px;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+  text-align: center;
+  background: #e8e8e8;
+  font-weight: 700;
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  border: 2px solid #000;
+  box-sizing: border-box;
 }
 
 .enhanced-set-input {
-  padding: 15px;
-  border: var(--border);
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  min-height: 36px;
   border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
   text-align: center;
-  font-size: 1.1rem;
-  background: #f0f0f0;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-  transition: all 0.2s ease;
-  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #000;
+  border: 2px solid #000;
+  font-weight: 700;
 }
 
 .enhanced-set-input:focus {
   outline: none;
-  border-color: var(--primary);
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+  border-color: #FF8C00;
+  background: #fff8f0;
+  color: #000;
+}
+
+.enhanced-set-input::placeholder {
+  color: #666;
+  font-weight: 500;
 }
 
 .enhanced-set-actions {
   display: flex;
-  gap: 10px;
+  gap: 4px;
   justify-content: center;
   align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 36px;
+}
+
+.enhanced-type-btn,
+.enhanced-complete-btn,
+.enhanced-remove-set-btn {
+  padding: 6px 8px;
+  font-size: 0.7rem;
+  min-height: 32px;
+  border-radius: 4px;
+  min-width: 32px;
+  max-width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #000;
+  font-weight: 700;
 }
 
 .enhanced-type-btn {
   background: #f0f0f0;
-  border: var(--border);
-  border-radius: 4px;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-  color: #333;
-}
-
-.enhanced-type-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+  color: #000;
 }
 
 .enhanced-type-btn.type-warmup {
   background: #FF8C00;
-  color: white;
-  border-color: var(--dark);
+  color: #fff;
+  border-color: #000;
 }
 
 .enhanced-type-btn.type-failure {
   background: #E76F51;
-  color: white;
-  border-color: var(--dark);
+  color: #fff;
+  border-color: #000;
 }
 
 .enhanced-complete-btn {
-  background: #f0f0f0;
-  border: var(--border);
-  border-radius: 4px;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-  color: #333;
+  background: #e0e0e0;
+  color: #999;
+  border: 2px solid #000;
+  font-weight: 800;
+  font-size: 0.7rem;
 }
 
 .enhanced-complete-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+  background: #d0d0d0;
+  color: #666;
 }
 
 .enhanced-complete-btn.completed {
   background: #2A9D8F;
-  color: white;
-  border-color: var(--dark);
+  color: #fff;
+  border-color: #000;
 }
 
 .enhanced-remove-set-btn {
-  background: var(--danger);
-  color: white;
-  border: var(--border);
-  border-radius: 4px;
-  width: 35px;
-  height: 35px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-}
-
-.enhanced-remove-set-btn:hover {
-  background: var(--dark);
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+  background: #E76F51;
+  color: #fff;
+  border-color: #000;
 }
 
 .enhanced-add-set-btn {
-  background: var(--success);
-  color: white;
-  border: var(--border);
-  padding: 15px 25px;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  margin: 20px;
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  min-height: 40px;
   border-radius: 4px;
-  box-shadow: var(--shadow);
+  margin-top: 8px;
+  width: 100%;
+  background: #2A9D8F;
+  color: #fff;
+  border: 2px solid #2A9D8F;
+  font-weight: 700;
+  cursor: pointer;
   transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .enhanced-add-set-btn:hover {
-  background: var(--secondary);
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+  background: #248277;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
 }
 
 .enhanced-form-actions {
@@ -2414,620 +2693,594 @@ body {
   :root {
     --light: #1A1A1A;
     --dark: #F5F5F5;
+    --primary: #FF8C00;
+    --secondary: #CCCCCC;
+    --accent: #FFD700;
+    --success: #2A9D8F;
+    --danger: #E76F51;
+    --title-brown: #F5F5F5;
+    --body-text: #F5F5F5;
+    --accent-brown: #FFD700;
+    --alt-accent-brown: #FFB366;
   }
-}
 
-/* Enhanced Mobile Responsiveness */
-@media (max-width: 768px) {
-  /* Base mobile adjustments */
   body {
-    font-size: 14px;
-    line-height: 1.5;
+    background-color: #1A1A1A;
+    color: #F5F5F5;
   }
 
-  /* Header mobile optimization */
+  /* Header dark mode */
   .header {
-    padding: 10px 15px;
-    min-height: auto;
-  }
-
-  .header-content {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
+    background: #2A2A2A;
+    border-bottom: 2px solid #FF8C00;
   }
 
   .logo {
-    font-size: 1.5rem;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  .nav {
-    flex-direction: column;
-    gap: 10px;
-    align-items: stretch;
+    color: #FF8C00;
   }
 
   .nav-link {
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    min-height: 44px; /* Touch-friendly minimum */
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .nav-link.active {
+    background: #FF8C00;
+    color: #000;
+    border-color: #FF8C00;
   }
 
   .user-email {
-    font-size: 0.8rem;
-    text-align: center;
-    padding: 8px;
-    background: var(--light);
-    border-radius: 4px;
+    background: #333;
+    color: #F5F5F5;
+    border: 1px solid #555;
   }
 
   .logout-btn {
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    min-height: 44px;
+    background: #E76F51;
+    color: #F5F5F5;
+    border: 2px solid #E76F51;
   }
 
-  /* Main content mobile layout */
+  /* Main content dark mode */
   .main-content {
-    grid-template-columns: 1fr;
-    padding: 15px 10px;
-    gap: 20px;
-    max-width: 100%;
-    overflow-x: hidden;
+    background: #1A1A1A;
   }
 
-  /* Workout form mobile optimization */
+  /* Workout form dark mode */
   .enhanced-workout-form-container {
-    padding: 15px;
-    margin: 0;
-    border-radius: 8px;
-  }
-
-  .enhanced-workout-header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
+    background: #2A2A2A;
+    border: 2px solid #FF8C00;
   }
 
   .enhanced-workout-header h2 {
-    font-size: 1.5rem;
-    text-align: center;
+    color: #FF8C00;
   }
 
   .enhanced-workout-header p {
-    font-size: 0.9rem;
-    text-align: center;
+    color: #CCCCCC;
   }
 
-  /* Exercise sections mobile */
+  /* Exercise section dark mode */
   .enhanced-exercise-section {
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-  }
-
-  .enhanced-exercise-header {
-    flex-direction: column;
-    gap: 10px;
-    align-items: stretch;
+    background: #2A2A2A;
+    border: 2px solid #555;
   }
 
   .enhanced-exercise-name-input {
-    font-size: 1rem;
-    padding: 12px 16px;
-    min-height: 44px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-exercise-name-input:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+    color: #F5F5F5;
+  }
+
+  .enhanced-exercise-name-input::placeholder {
+    color: #999;
   }
 
   .enhanced-remove-exercise-btn {
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    min-height: 44px;
-    width: 100%;
+    background: #E76F51;
+    color: #F5F5F5;
+    border: 2px solid #E76F51;
   }
 
-  /* Sets container mobile */
-  .enhanced-sets-container {
-    gap: 10px;
-  }
-
+  /* Sets header dark mode */
   .enhanced-sets-header {
-    flex-direction: column;
-    gap: 10px;
-    align-items: stretch;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
   .enhanced-sets-header h4 {
-    font-size: 1.1rem;
-    text-align: center;
+    color: #F5F5F5;
   }
 
   .status-legend {
-    flex-direction: column;
-    gap: 8px;
-    padding: 10px;
-    border-radius: 6px;
+    background: #FFD700;
+    border: 2px solid #FFB366;
   }
 
   .legend-item {
-    flex-direction: row;
-    gap: 8px;
-    align-items: center;
+    color: #000;
   }
 
-  /* Set rows mobile */
+  .legend-symbol {
+    border: 1px solid #000;
+  }
+
+  /* Set rows dark mode */
   .enhanced-set-row {
-    grid-template-columns: 40px 1fr 1fr 80px;
-    gap: 8px;
-    padding: 10px;
-    border-radius: 6px;
+    background: #2A2A2A;
+    border: 2px solid #555;
+  }
+
+  .enhanced-set-row.type-warmup {
+    background: rgba(255, 140, 0, 0.2);
+    border-left: 4px solid #FF8C00;
+  }
+
+  .enhanced-set-row.type-failure {
+    background: rgba(231, 111, 81, 0.2);
+    border-left: 4px solid #E76F51;
+  }
+
+  .enhanced-set-row.completed {
+    background: rgba(42, 157, 143, 0.2);
+    border-left: 4px solid #2A9D8F;
   }
 
   .enhanced-set-number {
-    font-size: 0.9rem;
-    min-width: 40px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
   .enhanced-set-input {
-    font-size: 0.9rem;
-    padding: 8px 12px;
-    min-height: 36px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
-  .enhanced-set-actions {
-    gap: 4px;
+  .enhanced-set-input:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+    color: #F5F5F5;
   }
 
+  .enhanced-set-input::placeholder {
+    color: #999;
+  }
+
+  /* Action buttons dark mode */
   .enhanced-type-btn {
-    padding: 6px 8px;
-    font-size: 0.7rem;
-    min-height: 32px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-type-btn.type-warmup {
+    background: #FF8C00;
+    color: #000;
+    border-color: #FF8C00;
+  }
+
+  .enhanced-type-btn.type-failure {
+    background: #E76F51;
+    color: #F5F5F5;
+    border-color: #E76F51;
   }
 
   .enhanced-complete-btn {
-    padding: 6px 8px;
-    font-size: 0.7rem;
-    min-height: 32px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-complete-btn.completed {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border-color: #2A9D8F;
   }
 
   .enhanced-remove-set-btn {
-    padding: 6px 8px;
-    font-size: 0.7rem;
-    min-height: 32px;
+    background: #E76F51;
+    color: #F5F5F5;
+    border: 2px solid #E76F51;
   }
 
-  /* Form actions mobile */
-  .enhanced-form-actions {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
+  .enhanced-add-set-btn {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border: 2px solid #2A9D8F;
   }
 
+  /* Form actions dark mode */
   .enhanced-add-exercise-btn,
   .enhanced-submit-workout-btn {
-    padding: 16px 20px;
-    font-size: 1rem;
-    min-height: 48px;
-    border-radius: 8px;
+    background: #FF8C00;
+    color: #000;
+    border: 2px solid #FF8C00;
   }
 
-  /* Timer mobile */
+  /* Timer dark mode */
   .workout-timer {
-    padding: 15px;
-    border-radius: 8px;
+    background: #2A2A2A;
+    border: 2px solid #FF8C00;
   }
 
   .timer-display {
-    font-size: 2rem;
-    padding: 10px;
-  }
-
-  .timer-controls {
-    gap: 10px;
+    color: #FF8C00;
   }
 
   .timer-control-btn {
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    min-height: 44px;
-    border-radius: 6px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
-  /* Workout options mobile */
-  .workout-options {
-    padding: 15px 10px;
-  }
-
-  .workout-options-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .workout-options-header p {
-    font-size: 0.9rem;
-  }
-
-  .workout-option-cards {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
+  /* Workout options dark mode */
   .workout-option-card {
-    padding: 20px;
-    border-radius: 8px;
+    background: #2A2A2A;
+    border: 2px solid #555;
   }
 
   .workout-option-card h3 {
-    font-size: 1.2rem;
+    color: #FF8C00;
   }
 
   .workout-option-card p {
-    font-size: 0.9rem;
+    color: #CCCCCC;
   }
 
   .option-btn {
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    min-height: 44px;
-    border-radius: 6px;
+    background: #FF8C00;
+    color: #000;
+    border: 2px solid #FF8C00;
   }
 
-  /* Templates mobile */
-  .templates-grid,
-  .previous-workouts-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
+  /* Templates dark mode */
   .template-card,
   .previous-workout-card {
-    padding: 15px;
-    border-radius: 8px;
+    background: #2A2A2A;
+    border: 2px solid #555;
   }
 
   .template-header h4 {
-    font-size: 1.1rem;
+    color: #FF8C00;
   }
 
   .template-description {
-    font-size: 0.9rem;
+    color: #CCCCCC;
   }
 
-  .template-actions {
-    flex-direction: column;
-    gap: 10px;
+  .use-template-btn {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border: 2px solid #2A9D8F;
   }
 
-  .use-template-btn,
   .delete-template-btn {
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    min-height: 44px;
-    border-radius: 6px;
+    background: #E76F51;
+    color: #F5F5F5;
+    border: 2px solid #E76F51;
   }
 
-  /* Workout list mobile */
+  /* Workout list dark mode */
   .jsonb-workout-card {
-    padding: 15px;
-    border-radius: 8px;
+    background: #2A2A2A;
+    border: 2px solid #555;
   }
 
   .jsonb-workout-header h3 {
-    font-size: 1.1rem;
+    color: #FF8C00;
   }
 
   .jsonb-exercise-item {
-    padding: 10px;
-    border-radius: 6px;
+    background: #333;
+    border: 1px solid #555;
   }
 
   .jsonb-exercise-name {
-    font-size: 0.9rem;
+    color: #F5F5F5;
   }
 
   .jsonb-set {
-    padding: 6px 8px;
-    font-size: 0.8rem;
+    background: #3A3A3A;
+    color: #F5F5F5;
+    border: 1px solid #555;
   }
 
-  /* Auth page mobile */
+  /* Auth page dark mode */
   .auth-page {
-    padding: 15px;
+    background: linear-gradient(135deg, #1A1A1A, #2A2A2A);
   }
 
   .app-title {
-    font-size: 2.5rem;
-    margin-bottom: 30px;
+    color: #FF8C00;
   }
 
   .auth-card {
-    padding: 25px 20px;
-    border-radius: 8px;
+    background: #2A2A2A;
+    border: 2px solid #FF8C00;
   }
 
   .auth-header h1 {
-    font-size: 1.8rem;
+    color: #FF8C00;
   }
 
   .auth-header p {
-    font-size: 0.9rem;
+    color: #CCCCCC;
   }
 
   .form-group input {
-    padding: 12px 16px;
-    font-size: 1rem;
-    min-height: 44px;
-    border-radius: 6px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .form-group input:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+    color: #F5F5F5;
   }
 
   .auth-button {
-    padding: 16px 20px;
-    font-size: 1rem;
-    min-height: 48px;
-    border-radius: 8px;
+    background: #FF8C00;
+    color: #000;
+    border: 2px solid #FF8C00;
   }
 
-  /* Progress chart mobile */
+  .toggle-link {
+    color: #FF8C00;
+  }
+
+  /* Progress chart dark mode */
   .progress-chart {
-    padding: 15px;
-    border-radius: 8px;
+    background: #2A2A2A;
+    border: 2px solid #555;
   }
 
   .chart-header h2 {
-    font-size: 1.5rem;
+    color: #FF8C00;
   }
 
   .exercise-select {
-    padding: 12px 16px;
-    font-size: 1rem;
-    min-height: 44px;
-    border-radius: 6px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
-  /* Template form mobile */
+  /* Template form dark mode */
   .create-template-form-container {
-    padding: 15px;
+    background: #2A2A2A;
   }
 
   .create-template-header h2 {
-    font-size: 1.5rem;
+    color: #FF8C00;
   }
 
   .template-name-input,
   .template-description-input {
-    padding: 12px 16px;
-    font-size: 1rem;
-    min-height: 44px;
-    border-radius: 6px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .template-name-input:focus,
+  .template-description-input:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+    color: #F5F5F5;
   }
 
   .template-set-row {
-    grid-template-columns: 40px 1fr 1fr 80px;
-    gap: 8px;
-    padding: 10px;
+    background: #2A2A2A;
+    border: 2px solid #555;
   }
 
   .set-input {
-    padding: 8px 12px;
-    font-size: 0.9rem;
-    min-height: 36px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
-  .template-form-actions {
-    flex-direction: column;
-    gap: 15px;
+  .set-input:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+    color: #F5F5F5;
   }
 
   .add-exercise-btn,
-  .save-template-btn,
+  .save-template-btn {
+    background: #FF8C00;
+    color: #000;
+    border: 2px solid #FF8C00;
+  }
+
   .cancel-btn {
-    padding: 16px 20px;
-    font-size: 1rem;
-    min-height: 48px;
-    border-radius: 8px;
+    background: #E76F51;
+    color: #F5F5F5;
+    border: 2px solid #E76F51;
   }
 
-  /* Back button mobile */
   .back-btn {
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    min-height: 44px;
-    border-radius: 6px;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  /* Empty states dark mode */
+  .empty-templates-state,
+  .empty-workouts-state {
+    color: #CCCCCC;
+  }
+
+  /* Loading state dark mode */
+  .loading {
+    color: #FF8C00;
   }
 }
 
-/* Extra small devices (phones, 375px and down) */
-@media (max-width: 375px) {
-  .main-content {
-    padding: 10px 5px;
-  }
-
-  .enhanced-workout-form-container,
-  .auth-card,
-  .workout-option-card,
-  .template-card,
-  .previous-workout-card,
-  .jsonb-workout-card {
-    padding: 15px 10px;
-  }
-
+/* Mobile-specific dark mode adjustments */
+@media (prefers-color-scheme: dark) {
   .enhanced-set-row {
-    grid-template-columns: 35px 1fr 1fr 70px;
-    gap: 6px;
-  }
-
-  .template-set-row {
-    grid-template-columns: 35px 1fr 1fr 70px;
-    gap: 6px;
-  }
-
-  .nav-link,
-  .logout-btn,
-  .enhanced-add-exercise-btn,
-  .enhanced-submit-workout-btn,
-  .auth-button {
-    font-size: 0.85rem;
-  }
-}
-
-/* Landscape orientation adjustments */
-@media (max-width: 768px) and (orientation: landscape) {
-  .header-content {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .main-content {
-    padding: 10px 15px;
-  }
-}
-
-/* Touch-friendly improvements */
-@media (hover: none) and (pointer: coarse) {
-  .nav-link:hover,
-  .logout-btn:hover,
-  .enhanced-complete-btn:hover,
-  .enhanced-remove-set-btn:hover,
-  .enhanced-add-set-btn:hover,
-  .enhanced-add-exercise-btn:hover,
-  .enhanced-submit-workout-btn:hover,
-  .auth-button:hover,
-  .workout-option-card:hover,
-  .template-card:hover,
-  .previous-workout-card:hover,
-  .jsonb-workout-card:hover {
-    transform: none;
-  }
-
-  /* Increase touch targets */
-  .enhanced-type-btn,
-  .enhanced-complete-btn,
-  .enhanced-remove-set-btn {
-    min-height: 44px;
-    padding: 10px 12px;
-  }
-}
-
-/* Enhanced Mobile Responsiveness - Better UX for set rows */
-@media (max-width: 768px) {
-  /* ... existing mobile styles ... */
-
-  /* Improved set rows - maintain horizontal layout but responsive */
-  .enhanced-set-row {
-    display: grid;
-    grid-template-columns: 50px 1fr 1fr 120px;
-    gap: 8px;
-    padding: 12px;
-    border-radius: 6px;
-    background: #f9f9f9;
-    margin-bottom: 8px;
-    border: 2px solid #000;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-    align-items: center;
+    background: #2A2A2A;
+    border: 2px solid #555;
   }
 
   .enhanced-set-number {
-    font-size: 0.9rem;
-    padding: 6px 8px;
-    border-radius: 4px;
-    text-align: center;
-    background: #e0e0e0;
-    font-weight: 700;
-    min-width: 40px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
   .enhanced-set-input {
-    padding: 8px 10px;
-    font-size: 0.9rem;
-    min-height: 36px;
-    border-radius: 4px;
-    text-align: center;
-    width: 100%;
-    box-sizing: border-box;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
-  .enhanced-set-actions {
-    display: flex;
-    gap: 4px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+  .enhanced-set-input:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+    color: #F5F5F5;
   }
 
-  .enhanced-type-btn,
-  .enhanced-complete-btn,
+  .enhanced-set-input::placeholder {
+    color: #999;
+  }
+
+  .enhanced-type-btn {
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-type-btn.type-warmup {
+    background: #FF8C00;
+    color: #000;
+    border-color: #FF8C00;
+  }
+
+  .enhanced-type-btn.type-failure {
+    background: #E76F51;
+    color: #F5F5F5;
+    border-color: #E76F51;
+  }
+
+  .enhanced-complete-btn {
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-complete-btn.completed {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border-color: #2A9D8F;
+  }
+
   .enhanced-remove-set-btn {
-    padding: 6px 8px;
-    font-size: 0.7rem;
-    min-height: 32px;
-    border-radius: 4px;
-    min-width: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #E76F51;
+    color: #F5F5F5;
+    border: 2px solid #E76F51;
   }
 
-  /* Make the sets header more compact */
   .enhanced-sets-header {
-    flex-direction: row;
-    gap: 8px;
-    align-items: center;
-    padding: 12px;
-    background: #f0f0f0;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
   .enhanced-sets-header h4 {
-    font-size: 1rem;
-    margin: 0;
-    flex: 1;
-    min-width: 120px;
+    color: #F5F5F5;
   }
 
   .status-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    flex: 2;
+    background: #FFD700;
+    border: 2px solid #FFB366;
   }
 
   .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.7rem;
-    white-space: nowrap;
+    color: #000;
   }
 
-  .legend-symbol {
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
+  .enhanced-exercise-name-input {
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
   }
 
-  /* Exercise header - keep horizontal but responsive */
+  .enhanced-exercise-name-input:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+    color: #F5F5F5;
+  }
+
+  .enhanced-exercise-name-input::placeholder {
+    color: #999;
+  }
+
+  .enhanced-remove-exercise-btn {
+    background: #E76F51;
+    color: #F5F5F5;
+    border: 2px solid #E76F51;
+  }
+
+  .enhanced-add-set-btn {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border: 2px solid #2A9D8F;
+  }
+
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn {
+    background: #FF8C00;
+    color: #000;
+    border: 2px solid #FF8C00;
+  }
+}
+
+/* Enhanced Mobile Responsiveness - No Container Constraints */
+@media (max-width: 768px) {
+  /* Remove all container padding and margins */
+  .enhanced-workout-form-container {
+    padding: 10px 5px;
+    margin: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .enhanced-workout-form {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  /* Exercise section - full width */
+  .enhanced-exercise-section {
+    margin: 0 5px 15px 5px;
+    padding: 12px;
+    border-radius: 6px;
+    background: #ffffff;
+    border: 2px solid #000;
+  }
+
+  /* Exercise header - full width */
   .enhanced-exercise-header {
-    flex-direction: row;
+    flex-direction: column;
     gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
+    align-items: stretch;
+    margin-bottom: 15px;
   }
 
   .enhanced-exercise-name-input {
@@ -3035,8 +3288,23 @@ body {
     padding: 10px 12px;
     min-height: 40px;
     border-radius: 4px;
-    flex: 1;
-    min-width: 200px;
+    width: 100%;
+    background: #ffffff;
+    color: #000;
+    border: 2px solid #000;
+    font-weight: 700;
+  }
+
+  .enhanced-exercise-name-input:focus {
+    outline: none;
+    border-color: #FF8C00;
+    background: #fff8f0;
+    color: #000;
+  }
+
+  .enhanced-exercise-name-input::placeholder {
+    color: #666;
+    font-weight: 500;
   }
 
   .enhanced-remove-exercise-btn {
@@ -3044,27 +3312,219 @@ body {
     font-size: 0.8rem;
     min-height: 40px;
     border-radius: 4px;
-    white-space: nowrap;
+    width: 100%;
+    background: #E76F51;
+    color: #fff;
+    border: 2px solid #E76F51;
+    font-weight: 700;
   }
 
-  /* Add set button - keep it compact */
+  /* Sets container - full width */
+  .enhanced-sets-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Sets header - full width grid */
+  .enhanced-sets-header {
+    display: grid;
+    grid-template-columns: 45px 1fr 1fr 120px;
+    gap: 6px;
+    padding: 10px;
+    background: #333;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    color: #fff;
+    align-items: center;
+    width: 100%;
+  }
+
+  .enhanced-sets-header h4 {
+    font-size: 0.8rem;
+    margin: 0;
+    color: #fff;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px;
+    background: #FFD700;
+    border: 2px solid #000;
+    border-radius: 4px;
+    grid-column: 1 / -1;
+    margin-top: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.65rem;
+    white-space: nowrap;
+    color: #000;
+    font-weight: 700;
+  }
+
+  .legend-symbol {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    border: 1px solid #000;
+  }
+
+  /* Set rows - full width grid */
+  .enhanced-set-row {
+    display: grid;
+    grid-template-columns: 45px 1fr 1fr 120px;
+    gap: 6px;
+    padding: 10px;
+    border-radius: 6px;
+    background: #ffffff;
+    margin-bottom: 8px;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    align-items: center;
+    min-height: 50px;
+    width: 100%;
+  }
+
+  .enhanced-set-number {
+    font-size: 0.85rem;
+    padding: 4px 6px;
+    border-radius: 4px;
+    text-align: center;
+    background: #e8e8e8;
+    font-weight: 700;
+    min-width: 35px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    border: 2px solid #000;
+  }
+
+  .enhanced-set-input {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+    min-height: 32px;
+    border-radius: 4px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+    color: #000;
+    border: 2px solid #000;
+    font-weight: 700;
+  }
+
+  .enhanced-set-input:focus {
+    outline: none;
+    border-color: #FF8C00;
+    background: #fff8f0;
+    color: #000;
+  }
+
+  .enhanced-set-input::placeholder {
+    color: #666;
+    font-weight: 500;
+  }
+
+  .enhanced-set-actions {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    min-width: 110px;
+  }
+
+  .enhanced-type-btn,
+  .enhanced-complete-btn,
+  .enhanced-remove-set-btn {
+    padding: 4px 6px;
+    font-size: 0.65rem;
+    min-height: 28px;
+    border-radius: 4px;
+    min-width: 28px;
+    max-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid #000;
+    font-weight: 700;
+  }
+
+  .enhanced-type-btn {
+    background: #f0f0f0;
+    color: #000;
+  }
+
+  .enhanced-type-btn.type-warmup {
+    background: #FF8C00;
+    color: #fff;
+    border-color: #000;
+  }
+
+  .enhanced-type-btn.type-failure {
+    background: #E76F51;
+    color: #fff;
+    border-color: #000;
+  }
+
+  .enhanced-complete-btn {
+    background: #e0e0e0;
+    color: #999;
+    border: 2px solid #000;
+    font-weight: 800;
+    font-size: 0.7rem;
+  }
+
+  .enhanced-complete-btn:hover {
+    background: #d0d0d0;
+    color: #666;
+  }
+
+  .enhanced-complete-btn.completed {
+    background: #2A9D8F;
+    color: #fff;
+    border-color: #000;
+  }
+
+  .enhanced-remove-set-btn {
+    background: #E76F51;
+    color: #fff;
+    border-color: #000;
+  }
+
+  /* Add set button - full width */
   .enhanced-add-set-btn {
     padding: 10px 12px;
     font-size: 0.8rem;
     min-height: 40px;
     border-radius: 4px;
     margin-top: 8px;
-    width: auto;
-    align-self: flex-start;
+    width: 100%;
+    background: #2A9D8F;
+    color: #fff;
+    border: 2px solid #2A9D8F;
+    font-weight: 700;
   }
 
-  /* Form actions - keep horizontal but responsive */
+  /* Form actions - full width */
   .enhanced-form-actions {
-    flex-direction: row;
+    flex-direction: column;
     gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: 15px 0;
+    align-items: stretch;
+    padding: 15px 5px;
+    width: 100%;
   }
 
   .enhanced-add-exercise-btn,
@@ -3073,87 +3533,48 @@ body {
     font-size: 0.9rem;
     min-height: 44px;
     border-radius: 6px;
-    flex: 1;
-    min-width: 140px;
+    width: 100%;
+    background: #FF8C00;
+    color: #000;
+    border: 2px solid #FF8C00;
+    font-weight: 700;
+  }
+
+  /* Workout header - full width */
+  .enhanced-workout-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+    padding: 0 5px;
+    margin-bottom: 20px;
+  }
+
+  .enhanced-workout-header h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    color: #000;
+  }
+
+  .enhanced-workout-header p {
+    font-size: 0.9rem;
+    text-align: center;
+    color: #666;
   }
 }
 
-/* Small phones - adjust grid for very narrow screens */
+/* Small phones - even more compact */
 @media (max-width: 480px) {
-  .enhanced-set-row {
-    grid-template-columns: 40px 1fr 1fr 100px;
-    gap: 6px;
+  .enhanced-workout-form-container {
+    padding: 5px 2px;
+  }
+
+  .enhanced-exercise-section {
+    margin: 0 2px 12px 2px;
     padding: 10px;
   }
 
-  .enhanced-set-number {
-    font-size: 0.8rem;
-    padding: 4px 6px;
-    min-width: 32px;
-    height: 32px;
-  }
-
-  .enhanced-set-input {
-    padding: 6px 8px;
-    font-size: 0.8rem;
-    min-height: 32px;
-  }
-
-  .enhanced-type-btn,
-  .enhanced-complete-btn,
-  .enhanced-remove-set-btn {
-    padding: 4px 6px;
-    font-size: 0.6rem;
-    min-height: 28px;
-    min-width: 28px;
-  }
-
-  .enhanced-sets-header {
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-  }
-
-  .enhanced-sets-header h4 {
-    text-align: center;
-  }
-
-  .status-legend {
-    justify-content: center;
-  }
-
-  .enhanced-exercise-header {
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-  }
-
-  .enhanced-exercise-name-input {
-    width: 100%;
-    min-width: auto;
-  }
-
-  .enhanced-remove-exercise-btn {
-    width: 100%;
-  }
-
-  .enhanced-form-actions {
-    flex-direction: column;
-    gap: 10px;
-    align-items: stretch;
-  }
-
-  .enhanced-add-exercise-btn,
-  .enhanced-submit-workout-btn {
-    width: 100%;
-    min-width: auto;
-  }
-}
-
-/* Extra small devices (phones, 375px and down) */
-@media (max-width: 375px) {
   .enhanced-set-row {
-    grid-template-columns: 35px 1fr 1fr 90px;
+    grid-template-columns: 40px 1fr 1fr 100px;
     gap: 4px;
     padding: 8px;
   }
@@ -3161,7 +3582,7 @@ body {
   .enhanced-set-number {
     font-size: 0.75rem;
     padding: 3px 5px;
-    min-width: 28px;
+    min-width: 30px;
     height: 28px;
   }
 
@@ -3171,12 +3592,1085 @@ body {
     min-height: 28px;
   }
 
+  .enhanced-set-actions {
+    min-width: 90px;
+    gap: 2px;
+  }
+
   .enhanced-type-btn,
   .enhanced-complete-btn,
   .enhanced-remove-set-btn {
     padding: 3px 5px;
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     min-height: 24px;
     min-width: 24px;
+    max-width: 28px;
+  }
+
+  .enhanced-sets-header {
+    grid-template-columns: 40px 1fr 1fr 100px;
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .enhanced-sets-header h4 {
+    font-size: 0.7rem;
+  }
+
+  .enhanced-workout-header {
+    padding: 0 2px;
   }
 }
+
+/* Extra small devices */
+@media (max-width: 375px) {
+  .enhanced-workout-form-container {
+    padding: 3px 1px;
+  }
+
+  .enhanced-exercise-section {
+    margin: 0 1px 10px 1px;
+    padding: 8px;
+  }
+
+  .enhanced-set-row {
+    grid-template-columns: 35px 1fr 1fr 90px;
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .enhanced-set-number {
+    font-size: 0.7rem;
+    padding: 2px 4px;
+    min-width: 25px;
+    height: 24px;
+  }
+
+  .enhanced-set-input {
+    padding: 3px 5px;
+    font-size: 0.7rem;
+    min-height: 24px;
+  }
+
+  .enhanced-set-actions {
+    min-width: 80px;
+    gap: 1px;
+  }
+
+  .enhanced-type-btn,
+  .enhanced-complete-btn,
+  .enhanced-remove-set-btn {
+    padding: 2px 4px;
+    font-size: 0.55rem;
+    min-height: 20px;
+    min-width: 20px;
+    max-width: 24px;
+  }
+
+  .enhanced-sets-header {
+    grid-template-columns: 35px 1fr 1fr 90px;
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .enhanced-sets-header h4 {
+    font-size: 0.65rem;
+  }
+
+  .enhanced-workout-header {
+    padding: 0 1px;
+  }
+}
+
+/* Dark mode adjustments for no-container layout */
+@media (prefers-color-scheme: dark) {
+  .enhanced-workout-form-container {
+    background: transparent;
+  }
+
+  .enhanced-workout-form {
+    background: transparent;
+  }
+
+  .enhanced-exercise-section {
+    background: #2A2A2A;
+    border: 2px solid #555;
+  }
+
+  .enhanced-exercise-name-input {
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-exercise-name-input:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+    color: #F5F5F5;
+  }
+
+  .enhanced-exercise-name-input::placeholder {
+    color: #999;
+  }
+
+  .enhanced-remove-exercise-btn {
+    background: #E76F51;
+    color: #F5F5F5;
+    border: 2px solid #E76F51;
+  }
+
+  .enhanced-set-row {
+    background: #2A2A2A;
+    border: 2px solid #555;
+  }
+
+  .enhanced-set-number {
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-set-input {
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-set-input:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+    color: #F5F5F5;
+  }
+
+  .enhanced-set-input::placeholder {
+    color: #999;
+  }
+
+  .enhanced-type-btn {
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-type-btn.type-warmup {
+    background: #FF8C00;
+    color: #000;
+    border-color: #FF8C00;
+  }
+
+  .enhanced-type-btn.type-failure {
+    background: #E76F51;
+    color: #F5F5F5;
+    border-color: #E76F51;
+  }
+
+  .enhanced-complete-btn {
+    background: #333;
+    color: #F5F5F5;
+    border: 2px solid #555;
+  }
+
+  .enhanced-complete-btn.completed {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border-color: #2A9D8F;
+  }
+
+  .enhanced-remove-set-btn {
+    background: #E76F51;
+    color: #F5F5F5;
+    border: 2px solid #E76F51;
+  }
+
+  .enhanced-add-set-btn {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border: 2px solid #2A9D8F;
+  }
+
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn {
+    background: #FF8C00;
+    color: #000;
+    border: 2px solid #FF8C00;
+  }
+
+  .enhanced-workout-header h2 {
+    color: #FF8C00;
+  }
+
+  .enhanced-workout-header p {
+    color: #CCCCCC;
+  }
+}
+
+/* ... existing code ... */
+
+/* Bottom Navigation Styles */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #2A2A2A;
+  border-top: 2px solid #FF8C00;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 60px;
+  justify-content: center;
+  color: #CCCCCC;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.bottom-nav-item:hover {
+  background: rgba(255, 140, 0, 0.1);
+  color: #FF8C00;
+}
+
+.bottom-nav-item.active {
+  background: #FF8C00;
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+}
+
+.nav-icon {
+  font-size: 1.5rem;
+  margin-bottom: 2px;
+}
+
+.nav-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 800;
+}
+
+/* Update main content to account for bottom nav */
+.main-content {
+  padding-bottom: 80px;
+  min-height: calc(100vh - 120px);
+}
+
+/* Update header for bottom nav layout */
+.header {
+  background: #2A2A2A;
+  border-bottom: 2px solid #FF8C00;
+  padding: 15px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #FF8C00;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+  letter-spacing: 2px;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-email {
+  color: #CCCCCC;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: #333;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #555;
+}
+
+.logout-btn {
+  background: #E76F51;
+  color: #F5F5F5;
+  border: 2px solid #E76F51;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.logout-btn:hover {
+  background: #D65A40;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(231, 111, 81, 0.3);
+}
+
+/* Mobile optimizations for bottom nav */
+@media (max-width: 768px) {
+  .bottom-nav {
+    padding: 6px 0;
+  }
+
+  .bottom-nav-item {
+    padding: 6px 12px;
+    min-height: 56px;
+    font-size: 0.75rem;
+  }
+
+  .nav-icon {
+    font-size: 1.3rem;
+  }
+
+  .nav-label {
+    font-size: 0.65rem;
+  }
+
+  .main-content {
+    padding-bottom: 70px;
+  }
+
+  .header {
+    padding: 12px 15px;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+  }
+
+  .user-section {
+    gap: 10px;
+  }
+
+  .user-email {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+
+  .logout-btn {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+  }
+}
+
+/* Dark mode for bottom nav */
+@media (prefers-color-scheme: dark) {
+  .bottom-nav {
+    background: #1A1A1A;
+    border-top: 2px solid #FF8C00;
+  }
+
+  .bottom-nav-item {
+    color: #CCCCCC;
+  }
+
+  .bottom-nav-item:hover {
+    background: rgba(255, 140, 0, 0.1);
+    color: #FF8C00;
+  }
+
+  .bottom-nav-item.active {
+    background: #FF8C00;
+    color: #000;
+  }
+
+  .header {
+    background: #1A1A1A;
+    border-bottom: 2px solid #FF8C00;
+  }
+
+  .user-email {
+    background: #333;
+    color: #F5F5F5;
+    border: 1px solid #555;
+  }
+}
+
+/* ... existing code ... */
+
+/* Fix workout timer display consistency */
+.workout-timer {
+  background: #ffffff;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+.timer-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.timer-display {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #FF8C00;
+  text-align: center;
+  padding: 8px;
+  background: #f8f8f8;
+  border: 2px solid #000;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.timer-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.timer-status {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.timer-status.active {
+  background: #2A9D8F;
+  color: #fff;
+}
+
+.timer-status.paused {
+  background: #FF8C00;
+  color: #000;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.timer-control-btn {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 2px solid #000;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: #000;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.timer-control-btn:hover {
+  background: #FF8C00;
+  color: #000;
+  transform: translateY(-1px);
+}
+
+/* Mobile timer adjustments */
+@media (max-width: 768px) {
+  .workout-timer {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .timer-label {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+
+  .timer-display {
+    font-size: 1.3rem;
+    padding: 6px;
+    margin-bottom: 8px;
+  }
+
+  .timer-info {
+    margin-bottom: 8px;
+  }
+
+  .timer-status {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+
+  .timer-controls {
+    gap: 6px;
+  }
+
+  .timer-control-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ... existing code ... */
+
+/* Fix add set button - smaller and left-aligned */
+.enhanced-add-set-btn {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  min-height: 36px;
+  border-radius: 4px;
+  margin-top: 8px;
+  width: auto;
+  background: #2A9D8F;
+  color: #fff;
+  border: 2px solid #2A9D8F;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.enhanced-add-set-btn:hover {
+  background: #248277;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
+}
+
+/* Fix form actions - remove gap and pull up buttons */
+.enhanced-form-actions {
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  padding: 15px 5px 5px 5px;
+  width: 100%;
+  margin-top: 0;
+}
+
+.enhanced-add-exercise-btn,
+.enhanced-submit-workout-btn {
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  min-height: 44px;
+  border-radius: 6px;
+  width: 100%;
+  background: #FF8C00;
+  color: #000;
+  border: 2px solid #FF8C00;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.enhanced-add-exercise-btn:hover,
+.enhanced-submit-workout-btn:hover {
+  background: #E67E00;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+}
+
+/* Fix exercise section spacing */
+.enhanced-exercise-section {
+  background: #ffffff;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .enhanced-add-set-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    min-height: 32px;
+  }
+
+  .enhanced-form-actions {
+    padding: 10px 5px 5px 5px;
+    gap: 10px;
+  }
+
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    min-height: 40px;
+  }
+
+  .enhanced-exercise-section {
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .enhanced-add-set-btn {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+    min-height: 28px;
+  }
+
+  .enhanced-form-actions {
+    padding: 8px 5px 5px 5px;
+    gap: 8px;
+  }
+
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    min-height: 36px;
+  }
+
+  .enhanced-exercise-section {
+    padding: 10px;
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 375px) {
+  .enhanced-add-set-btn {
+    padding: 4px 6px;
+    font-size: 0.65rem;
+    min-height: 24px;
+  }
+
+  .enhanced-form-actions {
+    padding: 6px 5px 5px 5px;
+    gap: 6px;
+  }
+
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    min-height: 32px;
+  }
+
+  .enhanced-exercise-section {
+    padding: 8px;
+    margin-bottom: 5px;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .enhanced-exercise-section {
+    background: #2A2A2A;
+    border: 2px solid #555;
+  }
+
+  .enhanced-add-set-btn {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border: 2px solid #2A9D8F;
+  }
+
+  .enhanced-add-set-btn:hover {
+    background: #248277;
+  }
+
+  .enhanced-add-exercise-btn,
+  .enhanced-submit-workout-btn {
+    background: #FF8C00;
+    color: #000;
+    border: 2px solid #FF8C00;
+  }
+
+  .enhanced-add-exercise-btn:hover,
+  .enhanced-submit-workout-btn:hover {
+    background: #E67E00;
+  }
+}
+
+/* ... existing code ... */
+
+/* Updated button styles for better distinction */
+.enhanced-type-btn {
+  background: #e0e0e0;
+  color: #666;
+  border: 2px solid #000;
+  font-weight: 800;
+  font-size: 0.7rem;
+}
+
+.enhanced-type-btn:hover {
+  background: #d0d0d0;
+  color: #000;
+}
+
+.enhanced-type-btn.type-warmup {
+  background: #FF8C00;
+  color: #fff;
+  border-color: #000;
+}
+
+.enhanced-type-btn.type-failure {
+  background: #E76F51;
+  color: #fff;
+  border-color: #000;
+}
+
+.enhanced-complete-btn {
+  background: #e0e0e0;
+  color: #999;
+  border: 2px solid #000;
+  font-weight: 800;
+  font-size: 0.7rem;
+}
+
+.enhanced-complete-btn:hover {
+  background: #d0d0d0;
+  color: #666;
+}
+
+.enhanced-complete-btn.completed {
+  background: #2A9D8F;
+  color: #fff;
+  border-color: #000;
+}
+
+/* Updated legend styles for horizontal layout */
+.legend-item.completion-status {
+  justify-content: center;
+  gap: 12px;
+}
+
+.legend-separator {
+  color: #666;
+  font-weight: 400;
+  margin: 0 8px;
+  font-size: 0.8rem;
+}
+
+/* Mobile optimizations for new button styles */
+@media (max-width: 768px) {
+  .enhanced-type-btn,
+  .enhanced-complete-btn {
+    font-size: 0.65rem;
+  }
+
+  .legend-item.completion-status {
+    gap: 10px;
+  }
+
+  .legend-separator {
+    margin: 0 6px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .enhanced-type-btn,
+  .enhanced-complete-btn {
+    font-size: 0.6rem;
+  }
+
+  .legend-item.completion-status {
+    gap: 8px;
+  }
+
+  .legend-separator {
+    margin: 0 4px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .enhanced-type-btn,
+  .enhanced-complete-btn {
+    font-size: 0.55rem;
+  }
+
+  .legend-item.completion-status {
+    gap: 6px;
+  }
+
+  .legend-separator {
+    margin: 0 3px;
+    font-size: 0.65rem;
+  }
+}
+
+/* Dark mode adjustments for new button styles */
+@media (prefers-color-scheme: dark) {
+  .enhanced-type-btn {
+    background: #444;
+    color: #CCC;
+    border: 2px solid #555;
+  }
+
+  .enhanced-type-btn:hover {
+    background: #555;
+    color: #F5F5F5;
+  }
+
+  .enhanced-type-btn.type-warmup {
+    background: #FF8C00;
+    color: #000;
+    border-color: #FF8C00;
+  }
+
+  .enhanced-type-btn.type-failure {
+    background: #E76F51;
+    color: #F5F5F5;
+    border-color: #E76F51;
+  }
+
+  .enhanced-complete-btn {
+    background: #444;
+    color: #CCC;
+    border: 2px solid #555;
+  }
+
+  .enhanced-complete-btn:hover {
+    background: #555;
+    color: #F5F5F5;
+  }
+
+  .enhanced-complete-btn.completed {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border-color: #2A9D8F;
+  }
+
+  .legend-separator {
+    color: #999;
+  }
+}
+
+/* ... existing code ... */
+
+/* Updated button styles with distinct defaults */
+.enhanced-type-btn {
+  background: #e0e0e0;
+  color: #666;
+  border: 2px solid #000;
+  font-weight: 800;
+  font-size: 0.6rem;
+}
+
+.enhanced-type-btn:hover {
+  background: #d0d0d0;
+  color: #000;
+}
+
+.enhanced-type-btn.type-warmup {
+  background: #FF8C00;
+  color: #fff;
+  border-color: #000;
+}
+
+.enhanced-type-btn.type-failure {
+  background: #E76F51;
+  color: #fff;
+  border-color: #000;
+}
+
+.enhanced-complete-btn {
+  background: #e0e0e0;
+  color: #666;
+  border: 2px solid #000;
+  font-weight: 800;
+  font-size: 0.7rem;
+}
+
+.enhanced-complete-btn:hover {
+  background: #d0d0d0;
+  color: #000;
+}
+
+.enhanced-complete-btn.completed {
+  background: #2A9D8F;
+  color: #fff;
+  border-color: #000;
+}
+
+/* Update legend to match new button states */
+.legend-symbol.default {
+  background: #e0e0e0;
+  color: #666;
+  border: 2px solid #000;
+}
+
+.legend-symbol.default-checkbox {
+  background: #e0e0e0;
+  color: #999;
+  border: 2px solid #000;
+}
+
+/* Mobile optimizations for new button styles */
+@media (max-width: 768px) {
+  .enhanced-type-btn {
+    font-size: 0.55rem;
+  }
+
+  .enhanced-complete-btn {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .enhanced-type-btn {
+    font-size: 0.5rem;
+  }
+
+  .enhanced-complete-btn {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .enhanced-type-btn {
+    font-size: 0.45rem;
+  }
+
+  .enhanced-complete-btn {
+    font-size: 0.55rem;
+  }
+}
+
+/* Dark mode adjustments for new button styles */
+@media (prefers-color-scheme: dark) {
+  .enhanced-type-btn {
+    background: #444;
+    color: #CCC;
+    border: 2px solid #555;
+  }
+
+  .enhanced-type-btn:hover {
+    background: #555;
+    color: #F5F5F5;
+  }
+
+  .enhanced-type-btn.type-warmup {
+    background: #FF8C00;
+    color: #000;
+    border-color: #FF8C00;
+  }
+
+  .enhanced-type-btn.type-failure {
+    background: #E76F51;
+    color: #F5F5F5;
+    border-color: #E76F51;
+  }
+
+  .enhanced-complete-btn {
+    background: #444;
+    color: #CCC;
+    border: 2px solid #555;
+  }
+
+  .enhanced-complete-btn:hover {
+    background: #555;
+    color: #F5F5F5;
+  }
+
+  .enhanced-complete-btn.completed {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border-color: #2A9D8F;
+  }
+
+  .legend-symbol.default {
+    background: #444;
+    color: #CCC;
+    border: 2px solid #555;
+  }
+
+  .legend-symbol.default-checkbox {
+    background: #444;
+    color: #666;
+    border: 2px solid #555;
+  }
+}
+
+/* ... existing code ... */
+
+/* Updated complete button styles with gray checkmark for incomplete */
+.enhanced-complete-btn {
+  background: #e0e0e0;
+  color: #999;
+  border: 2px solid #000;
+  font-weight: 800;
+  font-size: 0.7rem;
+}
+
+.enhanced-complete-btn:hover {
+  background: #d0d0d0;
+  color: #666;
+}
+
+.enhanced-complete-btn.completed {
+  background: #2A9D8F;
+  color: #fff;
+  border-color: #000;
+}
+
+/* Update legend to match new button states */
+.legend-symbol.default-checkbox {
+  background: #e0e0e0;
+  color: #999;
+  border: 2px solid #000;
+}
+
+/* Dark mode adjustments for gray checkmark */
+@media (prefers-color-scheme: dark) {
+  .enhanced-complete-btn {
+    background: #444;
+    color: #666;
+    border: 2px solid #555;
+  }
+
+  .enhanced-complete-btn:hover {
+    background: #555;
+    color: #999;
+  }
+
+  .enhanced-complete-btn.completed {
+    background: #2A9D8F;
+    color: #F5F5F5;
+    border-color: #2A9D8F;
+  }
+
+  .legend-symbol.default-checkbox {
+    background: #444;
+    color: #666;
+    border: 2px solid #555;
+  }
+}
+
+/* ... existing code ... */

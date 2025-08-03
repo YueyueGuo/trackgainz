@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { AuthPage } from './components/Auth/AuthPage'
 import { Header } from './components/Layout/Header'
+import { BottomNav } from './components/Layout/BottomNav'
 import { WorkoutPage } from './pages/WorkoutPage'
 import { ProgressPage } from './pages/ProgressPage'
 import './App.css'
@@ -24,8 +25,11 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="app-container">
-      <Header currentView={currentView} onViewChange={setCurrentView} />
-      {currentView === 'workouts' ? <WorkoutPage /> : <ProgressPage />}
+      <Header />
+      <main className="main-content">
+        {currentView === 'workouts' ? <WorkoutPage /> : <ProgressPage />}
+      </main>
+      <BottomNav currentView={currentView} onViewChange={setCurrentView} />
     </div>
   )
 }
