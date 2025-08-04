@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { Exercise, WorkoutSet, SetType } from '../../types/workout'
+import { ExerciseSelector } from './ExerciseSelector'
 
 interface EnhancedWorkoutFormProps {
   onWorkoutAdded: () => void
@@ -31,6 +32,8 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
   const [elapsedTime, setElapsedTime] = useState(0)
   const [timerState, setTimerState] = useState<'inactive' | 'active' | 'paused'>('inactive')
   const [pausedAt, setPausedAt] = useState<Date | null>(null)
+  const [showExerciseSelector, setShowExerciseSelector] = useState(false)
+  const [editingExerciseIndex, setEditingExerciseIndex] = useState<number | null>(null)
 
   // Auto-add empty exercise for fresh workouts
   React.useEffect(() => {
@@ -185,11 +188,31 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
     if (name.trim() && !workoutStartTime) {
       startTimerIfNeeded()
     }
-    
-    const updated = exercises.map((exercise, i) => 
-      i === exerciseIndex ? { ...exercise, name } : exercise
-    )
-    setExercises(updated)
+
+    const updatedExercises = [...exercises]
+    updatedExercises[exerciseIndex] = {
+      ...updatedExercises[exerciseIndex],
+      name: name.toUpperCase()
+    }
+    setExercises(updatedExercises)
+  }
+
+  const openExerciseSelector = (exerciseIndex: number) => {
+    setEditingExerciseIndex(exerciseIndex)
+    setShowExerciseSelector(true)
+  }
+
+  const handleExerciseSelect = (exerciseName: string, exerciseId: string) => {
+    if (editingExerciseIndex !== null) {
+      updateExerciseName(editingExerciseIndex, exerciseName)
+      setEditingExerciseIndex(null)
+    }
+    setShowExerciseSelector(false)
+  }
+
+  const closeExerciseSelector = () => {
+    setShowExerciseSelector(false)
+    setEditingExerciseIndex(null)
   }
 
   const addSet = (exerciseIndex: number) => {
@@ -449,8 +472,9 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
               <div className="enhanced-exercise-header">
                 <input
                   type="text"
-                  value={exercise.name}
+                  value={exercise.name.toUpperCase()}
                   onChange={(e) => updateExerciseName(exerciseIndex, e.target.value)}
+                  onFocus={() => openExerciseSelector(exerciseIndex)}
                   placeholder="EXERCISE NAME (E.G., BENCH PRESS)"
                   disabled={loading}
                   className="enhanced-exercise-name-input"
@@ -589,6 +613,14 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
           )}
         </div>
       </form>
+      
+      {showExerciseSelector && (
+        <ExerciseSelector
+          onExerciseSelect={handleExerciseSelect}
+          onClose={closeExerciseSelector}
+          currentExerciseName={editingExerciseIndex !== null ? exercises[editingExerciseIndex]?.name.toUpperCase() : undefined}
+        />
+      )}
     </div>
   )
 }

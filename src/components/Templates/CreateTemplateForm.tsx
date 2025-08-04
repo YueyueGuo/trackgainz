@@ -10,9 +10,9 @@ interface CreateTemplateFormProps {
 }
 
 const SET_TYPE_CONFIG = {
-  regular: { symbol: '⚪', label: 'Regular' },
-  warmup: { symbol: '🔥', label: 'Warm Up' },
-  failure: { symbol: '⚡', label: 'To Failure' }
+  regular: { symbol: 'W/F', label: 'Set Type' },
+  warmup: { symbol: 'W', label: 'Warm Up' },
+  failure: { symbol: 'F', label: 'To Failure' }
 }
 
 export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({ 
@@ -24,7 +24,32 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
   const [templateName, setTemplateName] = useState('')
   const [templateDescription, setTemplateDescription] = useState('')
   const [exercises, setExercises] = useState<Exercise[]>(
-    initialExercises.length > 0 ? initialExercises : []
+    initialExercises.length > 0 ? initialExercises : [
+      {
+        name: '',
+        sets: [
+          { weight: 0, reps: 0, type: 'regular', completed: false },
+          { weight: 0, reps: 0, type: 'regular', completed: false },
+          { weight: 0, reps: 0, type: 'regular', completed: false }
+        ]
+      },
+      {
+        name: '',
+        sets: [
+          { weight: 0, reps: 0, type: 'regular', completed: false },
+          { weight: 0, reps: 0, type: 'regular', completed: false },
+          { weight: 0, reps: 0, type: 'regular', completed: false }
+        ]
+      },
+      {
+        name: '',
+        sets: [
+          { weight: 0, reps: 0, type: 'regular', completed: false },
+          { weight: 0, reps: 0, type: 'regular', completed: false },
+          { weight: 0, reps: 0, type: 'regular', completed: false }
+        ]
+      }
+    ]
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -149,13 +174,15 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
   }
 
   return (
-    <div className="create-template-form-container">
-      <div className="create-template-header">
-        <h2>CREATE WORKOUT TEMPLATE</h2>
-        <p>Design a reusable workout plan</p>
+    <div className="enhanced-workout-form-container">
+      <div className="enhanced-workout-header">
+        <div className="workout-header-info">
+          <h2>CREATE WORKOUT TEMPLATE</h2>
+          <p>Design a reusable workout plan</p>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="create-template-form">
+      <form onSubmit={handleSubmit} className="enhanced-workout-form">
         {error && (
           <div className="error-message">
             {error}
@@ -192,78 +219,86 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
           </div>
         </div>
 
-        {exercises.length === 0 && (
-          <div className="empty-template-state">
-            <h3>NO EXERCISES YET</h3>
-            <p>Add your first exercise to start building your template</p>
-          </div>
-        )}
+        <div className="exercises-section">
+          <h3>EXERCISES</h3>
+          
+          {exercises.length === 0 && (
+            <div className="empty-template-state">
+              <h3>NO EXERCISES YET</h3>
+              <p>Add your first exercise to start building your template</p>
+            </div>
+          )}
 
-        {exercises.map((exercise, exerciseIndex) => (
-          <div key={exerciseIndex} className="template-exercise-section">
-            <div className="template-exercise-header">
+          {exercises.map((exercise, exerciseIndex) => (
+          <div key={exerciseIndex} className="enhanced-exercise-section">
+            <div className="enhanced-exercise-header">
               <input
                 type="text"
                 value={exercise.name}
                 onChange={(e) => updateExerciseName(exerciseIndex, e.target.value)}
                 placeholder="EXERCISE NAME (E.G., BENCH PRESS)"
-                className="template-exercise-name-input"
+                className="enhanced-exercise-name-input"
                 disabled={loading}
               />
               <button
                 type="button"
                 onClick={() => removeExercise(exerciseIndex)}
-                className="remove-exercise-btn"
+                className="enhanced-remove-exercise-btn"
                 disabled={loading}
+                title="Remove Exercise"
               >
                 REMOVE
               </button>
             </div>
 
-            <div className="template-sets-container">
-              <div className="template-sets-header">
-                <span>SET</span>
-                <span>WEIGHT (LBS)</span>
-                <span>REPS</span>
-                <span>TYPE</span>
+            <div className="enhanced-sets-container">
+              <div className="enhanced-sets-header template-sets-header-4col">
+                <h4>SET</h4>
+                <h4>WEIGHT (LBS)</h4>
+                <h4>REPS</h4>
+                <h4>TYPE</h4>
               </div>
 
               {exercise.sets.map((set, setIndex) => (
-                <div key={setIndex} className={`template-set-row type-${set.type}`}>
-                  <span className="set-number">{setIndex + 1}</span>
+                <div 
+                  key={setIndex} 
+                  className={`enhanced-set-row template-set-row-4col type-${set.type}`}
+                >
+                  <span className="enhanced-set-number">{setIndex + 1}</span>
                   
                   <input
                     type="number"
                     value={set.weight || ''}
                     onChange={(e) => {
-                      const value = e.target.value === '' ? 0 : Number(e.target.value)
-                      updateSet(exerciseIndex, setIndex, 'weight', value)
+                      const rawValue = e.target.value
+                      const parsedValue = rawValue === '' ? 0 : Number(rawValue)
+                      updateSet(exerciseIndex, setIndex, 'weight', parsedValue)
                     }}
                     placeholder="0"
                     disabled={loading}
-                    step="0.25"
                     min="0"
-                    className="set-input"
+                    className="enhanced-set-input"
                   />
                   
                   <input
                     type="number"
                     value={set.reps || ''}
                     onChange={(e) => {
-                      const value = e.target.value === '' ? 0 : Number(e.target.value)
-                      updateSet(exerciseIndex, setIndex, 'reps', value)
+                      const rawValue = e.target.value
+                      const parsedValue = rawValue === '' ? 0 : Number(rawValue)
+                      updateSet(exerciseIndex, setIndex, 'reps', parsedValue)
                     }}
                     placeholder="0"
                     disabled={loading}
                     min="0"
-                    className="set-input"
+                    className="enhanced-set-input"
                   />
                   
-                  <div className="template-set-actions">
+                  <div className="enhanced-set-actions">
                     <button
                       type="button"
                       onClick={() => cycleSetType(exerciseIndex, setIndex)}
-                      className={`type-btn type-${set.type}`}
+                      className={`enhanced-type-btn type-${set.type}`}
                       disabled={loading}
                       title={SET_TYPE_CONFIG[set.type].label}
                     >
@@ -274,10 +309,11 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
                       <button
                         type="button"
                         onClick={() => removeSet(exerciseIndex, setIndex)}
-                        className="remove-set-btn"
+                        className="enhanced-remove-set-btn"
                         disabled={loading}
+                        title="Remove Set"
                       >
-                        ✕
+                        ×
                       </button>
                     )}
                   </div>
@@ -287,26 +323,27 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
               <button
                 type="button"
                 onClick={() => addSet(exerciseIndex)}
-                className="add-set-btn"
+                className="enhanced-add-set-btn"
                 disabled={loading}
               >
-                + ADD SET
+                ADD SET
               </button>
             </div>
           </div>
         ))}
-
-        <div className="template-form-actions">
+        </div>
+        
+        <div className="enhanced-form-actions">
           <button
             type="button"
             onClick={addExercise}
-            className="add-exercise-btn"
+            className="enhanced-add-exercise-btn"
             disabled={loading}
           >
-            + ADD EXERCISE
+            ADD EXERCISE
           </button>
-
-          <div className="action-buttons">
+          
+          <div className="template-action-buttons">
             <button
               type="button"
               onClick={onCancel}
@@ -317,7 +354,7 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
             </button>
             <button 
               type="submit" 
-              className="save-template-btn"
+              className="enhanced-submit-workout-btn"
               disabled={loading || !templateName.trim() || exercises.length === 0}
             >
               {loading ? 'SAVING...' : 'SAVE TEMPLATE'}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { Workout } from '../../types/workout'
+import { EnhancedWorkoutCard } from './EnhancedWorkoutCard'
 
 interface JSONBWorkoutListProps {
   refreshTrigger: number
@@ -10,8 +11,11 @@ interface JSONBWorkoutListProps {
 export const JSONBWorkoutList: React.FC<JSONBWorkoutListProps> = ({ refreshTrigger }) => {
   const { user } = useAuth()
   const [workouts, setWorkouts] = useState<Workout[]>([])
+  const [filteredWorkouts, setFilteredWorkouts] = useState<Workout[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
 
   const fetchWorkouts = async () => {
     if (!user) return
@@ -26,6 +30,7 @@ export const JSONBWorkoutList: React.FC<JSONBWorkoutListProps> = ({ refreshTrigg
       if (error) throw error
 
       setWorkouts(data || [])
+      setFilteredWorkouts(data || [])
     } catch (error: any) {
       setError(error.message)
     } finally {
@@ -36,6 +41,27 @@ export const JSONBWorkoutList: React.FC<JSONBWorkoutListProps> = ({ refreshTrigg
   useEffect(() => {
     fetchWorkouts()
   }, [user, refreshTrigger])
+
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredWorkouts(workouts)
+    } else {
+      const filtered = workouts.filter(workout => {
+        const date = new Date(workout.date).toLocaleDateString('en-US', {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }).toLowerCase()
+        
+        const exercises = workout.exercises?.exercises?.map(ex => ex.name).join(' ').toLowerCase() || ''
+        
+        return date.includes(searchTerm.toLowerCase()) || 
+               exercises.includes(searchTerm.toLowerCase())
+      })
+      setFilteredWorkouts(filtered)
+    }
+  }, [searchTerm, workouts])
 
   const deleteWorkout = async (workoutId: string) => {
     if (!window.confirm('Are you sure you want to delete this workout?')) return
@@ -54,44 +80,17 @@ export const JSONBWorkoutList: React.FC<JSONBWorkoutListProps> = ({ refreshTrigg
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
+  const handleWorkoutClick = (workout: Workout) => {
+    setSelectedWorkout(workout)
   }
 
-  const formatDuration = (durationInSeconds: number | null | undefined) => {
-    if (!durationInSeconds || durationInSeconds <= 0) return 'No time recorded'
-    
-    const hours = Math.floor(durationInSeconds / 3600)
-    const minutes = Math.floor((durationInSeconds % 3600) / 60)
-    const seconds = durationInSeconds % 60
-    
-    if (hours > 0) {
-      return `${hours}h ${minutes}m ${seconds}s`
-    } else if (minutes > 0) {
-      return `${minutes}m ${seconds}s`
-    } else {
-      return `${seconds}s`
-    }
-  }
-
-  const calculateTotalVolume = (workout: Workout) => {
-    if (!workout.exercises?.exercises) return 0
-    
-    return workout.exercises.exercises.reduce((total, exercise) => {
-      return total + exercise.sets.reduce((exerciseTotal, set) => {
-        return exerciseTotal + (set.weight * set.reps)
-      }, 0)
-    }, 0)
+  const handleBackToList = () => {
+    setSelectedWorkout(null)
   }
 
   if (loading) {
     return (
-      <div className="jsonb-workout-list">
+      <div className="enhanced-workout-list">
         <div className="loading">LOADING WORKOUTS...</div>
       </div>
     )
@@ -99,7 +98,7 @@ export const JSONBWorkoutList: React.FC<JSONBWorkoutListProps> = ({ refreshTrigg
 
   if (error) {
     return (
-      <div className="jsonb-workout-list">
+      <div className="enhanced-workout-list">
         <div className="error-message">{error}</div>
       </div>
     )
@@ -107,66 +106,82 @@ export const JSONBWorkoutList: React.FC<JSONBWorkoutListProps> = ({ refreshTrigg
 
   if (workouts.length === 0) {
     return (
-      <div className="jsonb-workout-list">
-        <div className="jsonb-workout-list-header">
-          <h2>WORKOUT HISTORY</h2>
-          <p>No workouts yet. Complete a workout to see it here!</p>
+      <div className="enhanced-workout-list">
+        <div className="empty-state">
+          <h3>NO WORKOUTS YET</h3>
+          <p>Complete your first workout to see it here!</p>
         </div>
       </div>
     )
   }
 
-  return (
-    <div className="jsonb-workout-list">
-      <div className="jsonb-workout-list-header">
-        <h2>WORKOUT HISTORY</h2>
-        <p>{workouts.length} sessions logged</p>
-      </div>
-
-      <div className="jsonb-workouts">
-        {workouts.map((workout) => (
-          <div key={workout.id} className="jsonb-workout-card">
-            <div className="jsonb-workout-header">
-              <div>
-                <h3>{formatDate(workout.date)}</h3>
-                <p className="workout-exercises-count">
-                  {workout.exercises?.exercises?.length || 0} exercises
-                </p>
-                <p className="workout-duration">
-                  Duration: {formatDuration(workout.duration)}
-                </p>
-              </div>
-              <div className="jsonb-workout-stats">
-                <span className="volume">
-                  {calculateTotalVolume(workout).toLocaleString()} lbs
-                </span>
-                <button
-                  onClick={() => deleteWorkout(workout.id)}
-                  className="delete-btn"
-                >
-                  DELETE
-                </button>
+  // Show detailed workout view
+  if (selectedWorkout) {
+    return (
+      <div className="enhanced-workout-list">
+        <div className="workout-detail-view">
+          <div className="detail-header">
+            <button onClick={handleBackToList} className="back-btn">
+              ← BACK TO WORKOUTS
+            </button>
+            <h2>{new Date(selectedWorkout.date).toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}</h2>
+          </div>
+          
+          <div className="workout-detail-content">
+            {/* Detailed workout view - we can expand this later */}
+            <div className="workout-summary">
+              <div className="summary-stats">
+                <div className="stat">
+                  <span className="stat-label">DURATION</span>
+                  <span className="stat-value">
+                    {selectedWorkout.duration ? 
+                      `${Math.floor(selectedWorkout.duration / 60)}m ${selectedWorkout.duration % 60}s` : 
+                      'Not recorded'
+                    }
+                  </span>
+                </div>
+                <div className="stat">
+                  <span className="stat-label">EXERCISES</span>
+                  <span className="stat-value">
+                    {selectedWorkout.exercises?.exercises?.length || 0}
+                  </span>
+                </div>
+                <div className="stat">
+                  <span className="stat-label">TOTAL VOLUME</span>
+                  <span className="stat-value">
+                    {selectedWorkout.exercises?.exercises?.reduce((total, exercise) => 
+                      total + exercise.sets.reduce((exerciseTotal, set) => 
+                        exerciseTotal + (set.weight * set.reps), 0
+                      ), 0
+                    ).toLocaleString()} lbs
+                  </span>
+                </div>
               </div>
             </div>
-
-            {workout.exercises?.exercises && (
-              <div className="jsonb-exercises">
-                {workout.exercises.exercises.map((exercise, exerciseIndex) => (
-                  <div key={exerciseIndex} className="jsonb-exercise-item">
-                    <div className="jsonb-exercise-name">{exercise.name}</div>
-                    <div className="jsonb-sets">
+            
+            {selectedWorkout.exercises?.exercises && (
+              <div className="exercises-detail">
+                {selectedWorkout.exercises.exercises.map((exercise, index) => (
+                  <div key={index} className="exercise-detail-item">
+                    <h3>{exercise.name}</h3>
+                    <div className="sets-detail">
                       {exercise.sets.map((set, setIndex) => (
-                        <div key={setIndex} className={`jsonb-set type-${set.type} ${set.completed ? 'completed' : ''}`}>
+                        <div key={setIndex} className={`set-detail ${set.type} ${set.completed ? 'completed' : ''}`}>
                           <span className="set-info">
-                            {set.weight}lbs × {set.reps} reps
+                            Set {setIndex + 1}: {set.weight}lbs × {set.reps} reps
                           </span>
                           <span className="set-badges">
                             {set.type !== 'regular' && (
-                              <span className={`type-badge type-${set.type}`}>
-                                {set.type === 'warmup' ? '🔥' : '⚡'}
+                              <span className={`type-badge ${set.type}`}>
+                                {set.type === 'warmup' ? 'W' : 'F'}
                               </span>
                             )}
-                            {set.completed && <span className="completed-badge">✅</span>}
+                            {set.completed && <span className="completed-badge">✓</span>}
                           </span>
                         </div>
                       ))}
@@ -176,8 +191,47 @@ export const JSONBWorkoutList: React.FC<JSONBWorkoutListProps> = ({ refreshTrigg
               </div>
             )}
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Show workout list view
+  return (
+    <div className="enhanced-workout-list">
+      <div className="workout-list-header">
+        <div className="header-content">
+          <h2>WORKOUT HISTORY</h2>
+          <p>{workouts.length} sessions logged</p>
+        </div>
+        
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search workouts..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
+      </div>
+
+      <div className="workout-cards">
+        {filteredWorkouts.map((workout) => (
+          <EnhancedWorkoutCard
+            key={workout.id}
+            workout={workout}
+            onDelete={deleteWorkout}
+            onClick={handleWorkoutClick}
+          />
         ))}
       </div>
+
+      {filteredWorkouts.length === 0 && searchTerm && (
+        <div className="no-results">
+          <p>No workouts found matching "{searchTerm}"</p>
+        </div>
+      )}
     </div>
   )
 }

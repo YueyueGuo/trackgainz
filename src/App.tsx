@@ -3,13 +3,15 @@ import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { AuthPage } from './components/Auth/AuthPage'
 import { Header } from './components/Layout/Header'
 import { BottomNav } from './components/Layout/BottomNav'
+import { RecordPage } from './pages/RecordPage'
 import { WorkoutPage } from './pages/WorkoutPage'
 import { ProgressPage } from './pages/ProgressPage'
+import { ProfilePage } from './pages/ProfilePage';
 import './App.css'
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth()
-  const [currentView, setCurrentView] = useState<'workouts' | 'progress'>('workouts')
+  const [currentView, setCurrentView] = useState<'record' | 'workouts' | 'progress' | 'profile'>('record')
 
   if (loading) {
     return (
@@ -23,11 +25,26 @@ const AppContent: React.FC = () => {
     return <AuthPage />
   }
 
+  const renderCurrentPage = () => {
+    switch (currentView) {
+      case 'record':
+        return <RecordPage />
+      case 'workouts':
+        return <WorkoutPage />
+      case 'progress':
+        return <ProgressPage />
+      case 'profile':
+        return <ProfilePage />;
+      default:
+        return <RecordPage />
+    }
+  }
+
   return (
     <div className="app-container">
       <Header />
       <main className="main-content">
-        {currentView === 'workouts' ? <WorkoutPage /> : <ProgressPage />}
+        {renderCurrentPage()}
       </main>
       <BottomNav currentView={currentView} onViewChange={setCurrentView} />
     </div>
