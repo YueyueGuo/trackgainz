@@ -383,11 +383,7 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
                       <span className="muscle-groups">
                         {exercise.muscle_groups.join(', ')}
                       </span>
-                      <span className="category">{exercise.category}</span>
                     </div>
-                    {exercise.description && (
-                      <p className="description">{exercise.description}</p>
-                    )}
                   </div>
                 </div>
               ))
