@@ -6,11 +6,6 @@ export const WorkoutPage: React.FC = () => {
 
   return (
     <div className="main-content">
-      <div className="workout-history-header">
-        <h2>WORKOUT HISTORY</h2>
-        <p>View and manage your past workout sessions</p>
-      </div>
-      
       <JSONBWorkoutList 
         refreshTrigger={refreshTrigger} 
       />
