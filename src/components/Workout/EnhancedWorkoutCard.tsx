@@ -62,21 +62,21 @@ export const EnhancedWorkoutCard: React.FC<EnhancedWorkoutCardProps> = ({
 
   const getMuscleGroupIcon = (muscleGroup: MuscleGroup): string => {
     const icons: Record<MuscleGroup, string> = {
-      chest: '💪',
-      back: '🏋️',
-      shoulders: '🤲',
-      biceps: '💪',
-      triceps: '💪',
-      forearms: '💪',
-      abs: '🎯',
-      obliques: '🏋️',
-      quads: '🦵',
-      hamstrings: '🦵',
-      glutes: '🍑',
-      calves: '🦵',
-      traps: '🏋️',
-      lats: '🏋️',
-      deltoids: '🤲'
+      chest: '',
+      back: '',
+      shoulders: '',
+      biceps: '',
+      triceps: '',
+      forearms: '',
+      abs: '',
+      obliques: '',
+      quads: '',
+      hamstrings: '',
+      glutes: '',
+      calves: '',
+      traps: '',
+      lats: '',
+      deltoids: ''
     }
     return icons[muscleGroup] || '🏋️'
   }
