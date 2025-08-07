@@ -62,21 +62,21 @@ export const EnhancedWorkoutCard: React.FC<EnhancedWorkoutCardProps> = ({
 
   const getMuscleGroupIcon = (muscleGroup: MuscleGroup): string => {
     const icons: Record<MuscleGroup, string> = {
-      chest: '',
-      back: '️',
-      shoulders: '️',
-      biceps: '',
+      chest: '💪',
+      back: '🏋️',
+      shoulders: '🤲',
+      biceps: '💪',
       triceps: '💪',
       forearms: '💪',
-      abs: '️',
+      abs: '🎯',
       obliques: '🏋️',
-      quads: '',
+      quads: '🦵',
       hamstrings: '🦵',
       glutes: '🍑',
-      calves: '',
-      traps: '️',
-      lats: '️',
-      deltoids: '️'
+      calves: '🦵',
+      traps: '🏋️',
+      lats: '🏋️',
+      deltoids: '🤲'
     }
     return icons[muscleGroup] || '🏋️'
   }
@@ -95,18 +95,10 @@ export const EnhancedWorkoutCard: React.FC<EnhancedWorkoutCardProps> = ({
           </span>
         </div>
         
-        <div className="workout-stats">
-          <div className="stat-item">
-            <span className="stat-label">VOLUME</span>
-            <span className="stat-value">{totalVolume.toLocaleString()} lbs</span>
-          </div>
-          
-          <div className="stat-item">
-            <span className="stat-label">EXERCISES</span>
-            <span className="stat-value">
-              {workout.exercises?.exercises?.length || 0}
-            </span>
-          </div>
+        <div className="workout-stats-condensed">
+          <span className="condensed-stats">
+            {totalVolume.toLocaleString()} lbs • {workout.exercises?.exercises?.length || 0} exercises
+          </span>
         </div>
       </div>
 
@@ -125,24 +117,12 @@ export const EnhancedWorkoutCard: React.FC<EnhancedWorkoutCardProps> = ({
 
       {hasRecords && (
         <div className="records-badge">
-          <span className="records-icon"></span>
+          <span className="records-icon">🏆</span>
           <span className="records-text">
             {workout.personalRecords!.length} NEW RECORD{workout.personalRecords!.length > 1 ? 'S' : ''}
           </span>
         </div>
       )}
-
-      <div className="workout-card-actions">
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete(workout.id)
-          }}
-          className="delete-btn"
-        >
-          DELETE
-        </button>
-      </div>
     </div>
   )
 } 

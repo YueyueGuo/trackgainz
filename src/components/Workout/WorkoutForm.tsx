@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
+import { useUnits } from '../../contexts/UnitContext'
 
 interface Exercise {
   name: string
@@ -15,6 +16,7 @@ interface WorkoutFormProps {
 
 export const WorkoutForm: React.FC<WorkoutFormProps> = ({ onWorkoutAdded }) => {
   const { user } = useAuth()
+  const { weightUnit } = useUnits()
   const [workoutName, setWorkoutName] = useState('')
   const [exercises, setExercises] = useState<Exercise[]>([
     { name: '', sets: 1, reps: 1, weight: 0 }
@@ -153,7 +155,7 @@ export const WorkoutForm: React.FC<WorkoutFormProps> = ({ onWorkoutAdded }) => {
                 </div>
 
                 <div className="form-group">
-                  <label>WEIGHT (LBS)</label>
+                  <label>WEIGHT ({weightUnit.toUpperCase()})</label>
                   <input
                     type="number"
                     value={exercise.weight}

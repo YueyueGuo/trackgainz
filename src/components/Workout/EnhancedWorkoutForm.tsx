@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
+import { useUnits } from '../../contexts/UnitContext'
 import { Exercise, WorkoutSet, SetType } from '../../types/workout'
 import { ExerciseSelector } from './ExerciseSelector'
 
@@ -24,6 +25,7 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
   isFreshWorkout = false
 }) => {
   const { user } = useAuth()
+  const { weightUnit } = useUnits()
   const [exercises, setExercises] = useState<Exercise[]>(initialExercises)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -493,7 +495,7 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
               <div className="enhanced-sets-container">
                 <div className="enhanced-sets-header">
                   <h4>SET</h4>
-                  <h4>WEIGHT (LBS)</h4>
+                  <h4>WEIGHT ({weightUnit.toUpperCase()})</h4>
                   <h4>REPS</h4>
                   <h4>TYPE & STATUS</h4>
                   <button
@@ -520,12 +522,13 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
                       value={set.weight || ''}
                       onChange={(e) => {
                         const rawValue = e.target.value
-                        const parsedValue = rawValue === '' ? 0 : Number(rawValue)
+                        const parsedValue = rawValue === '' ? 0 : parseFloat(rawValue)
                         updateSet(exerciseIndex, setIndex, 'weight', parsedValue)
                       }}
                       placeholder="0"
                       disabled={loading}
                       min="0"
+                      step="0.25"
                       className="enhanced-set-input"
                     />
                     
@@ -534,12 +537,13 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
                       value={set.reps || ''}
                       onChange={(e) => {
                         const rawValue = e.target.value
-                        const parsedValue = rawValue === '' ? 0 : Number(rawValue)
+                        const parsedValue = rawValue === '' ? 0 : parseInt(rawValue)
                         updateSet(exerciseIndex, setIndex, 'reps', parsedValue)
                       }}
                       placeholder="0"
                       disabled={loading}
                       min="0"
+                      step="1"
                       className="enhanced-set-input"
                     />
                     

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { DatabaseExercise, MuscleGroup } from '../../types/workout'
 import { ExerciseService } from '../../services/exerciseService'
 import { EXERCISE_SEED_DATA } from '../../data/exerciseSeedData'
+import { useAuth } from '../../contexts/AuthContext'
 
 interface ExerciseSelectorProps {
   onExerciseSelect: (exerciseName: string, exerciseId: string) => void
@@ -14,16 +15,36 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
   onClose,
   currentExerciseName
 }) => {
+  const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<MuscleGroup | 'all'>('all')
   const [exercises, setExercises] = useState<DatabaseExercise[]>([])
   const [filteredExercises, setFilteredExercises] = useState<DatabaseExercise[]>([])
   const [loading, setLoading] = useState(true)
   const [useDatabase, setUseDatabase] = useState(true)
+  const [showCustomForm, setShowCustomForm] = useState(false)
+  const [creatingExercise, setCreatingExercise] = useState(false)
+
+  // Custom exercise form state
+  const [customExercise, setCustomExercise] = useState({
+    name: '',
+    muscleGroups: [] as MuscleGroup[],
+    category: 'compound' as 'compound' | 'isolation' | 'cardio' | 'bodyweight'
+  })
 
   useEffect(() => {
     loadExercises()
   }, [])
+
+  // Update custom exercise name when search term changes
+  useEffect(() => {
+    if (searchTerm.trim() && filteredExercises.length === 0) {
+      setCustomExercise(prev => ({ ...prev, name: searchTerm.trim().toUpperCase() }))
+      setShowCustomForm(true)
+    } else {
+      setShowCustomForm(false)
+    }
+  }, [searchTerm, filteredExercises.length])
 
   const loadExercises = async () => {
     try {
@@ -182,6 +203,44 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
     onClose()
   }
 
+  const handleCreateCustomExercise = async () => {
+    if (!user || !customExercise.name.trim()) return
+
+    setCreatingExercise(true)
+    try {
+      const newExercise = await ExerciseService.createExercise({
+        name: customExercise.name.trim(),
+        muscle_groups: customExercise.muscleGroups,
+        category: customExercise.category,
+        equipment: [],
+        difficulty: 'beginner',
+        description: ''
+      }, user.id)
+
+      // Add to local exercises list
+      setExercises(prev => [newExercise, ...prev])
+      setFilteredExercises(prev => [newExercise, ...prev])
+
+      // Select the new exercise
+      onExerciseSelect(newExercise.name.toUpperCase(), newExercise.id)
+      onClose()
+    } catch (error) {
+      console.error('Error creating custom exercise:', error)
+      alert('Failed to create custom exercise. Please try again.')
+    } finally {
+      setCreatingExercise(false)
+    }
+  }
+
+  const toggleMuscleGroup = (group: MuscleGroup) => {
+    setCustomExercise(prev => ({
+      ...prev,
+      muscleGroups: prev.muscleGroups.includes(group)
+        ? prev.muscleGroups.filter(g => g !== group)
+        : [...prev.muscleGroups, group]
+    }))
+  }
+
   const muscleGroups: (MuscleGroup | 'all')[] = [
     'all', 'chest', 'back', 'shoulders', 'biceps', 'triceps',
     'forearms', 'abs', 'obliques', 'quads', 'hamstrings',
@@ -217,69 +276,124 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
           />
         </div>
 
-        <div className="exercise-selector-filters">
-          <select
-            value={selectedMuscleGroup}
-            onChange={(e) => setSelectedMuscleGroup(e.target.value as MuscleGroup | 'all')}
-            className="muscle-group-filter"
-          >
-            {muscleGroups.map(group => (
-              <option key={group} value={group}>
-                {group === 'all' ? 'All Muscle Groups' : group.charAt(0).toUpperCase() + group.slice(1)}
-              </option>
-            ))}
-          </select>
-        </div>
+        {!showCustomForm && (
+          <div className="exercise-selector-filters">
+            <select
+              value={selectedMuscleGroup}
+              onChange={(e) => setSelectedMuscleGroup(e.target.value as MuscleGroup | 'all')}
+              className="muscle-group-filter"
+            >
+              {muscleGroups.map(group => (
+                <option key={group} value={group}>
+                  {group === 'all' ? 'All Muscle Groups' : group.charAt(0).toUpperCase() + group.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
-        <div className="exercise-list">
-          {filteredExercises.length === 0 ? (
-            <div className="no-exercises">
-              <p>No exercises found matching your criteria.</p>
-              <button 
-                onClick={() => {
-                  setSearchTerm('')
-                  setSelectedMuscleGroup('all')
-                }}
-                className="clear-filters-btn"
+        {showCustomForm ? (
+          <div className="custom-exercise-form">
+            <div className="custom-exercise-header">
+              <h4>No results found. Want to add new exercise?</h4>
+            </div>
+
+            <div className="form-group">
+              <label>Exercise Name</label>
+              <input
+                type="text"
+                value={customExercise.name}
+                onChange={(e) => setCustomExercise(prev => ({ ...prev, name: e.target.value.toUpperCase() }))}
+                placeholder="e.g., CUSTOM EXERCISE"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Muscle Groups</label>
+              <div className="muscle-groups-grid">
+                {muscleGroups.filter(group => group !== 'all').map(group => (
+                  <button
+                    key={group}
+                    type="button"
+                    onClick={() => toggleMuscleGroup(group as MuscleGroup)}
+                    className={`muscle-group-btn ${customExercise.muscleGroups.includes(group as MuscleGroup) ? 'selected' : ''}`}
+                  >
+                    {group.charAt(0).toUpperCase() + group.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Category</label>
+              <select
+                value={customExercise.category}
+                onChange={(e) => setCustomExercise(prev => ({ ...prev, category: e.target.value as any }))}
+                className="form-select"
               >
-                Clear Filters
+                <option value="compound">Compound</option>
+                <option value="isolation">Isolation</option>
+                <option value="cardio">Cardio</option>
+                <option value="bodyweight">Bodyweight</option>
+              </select>
+            </div>
+
+            <div className="custom-exercise-actions">
+              <button
+                onClick={handleCreateCustomExercise}
+                disabled={!customExercise.name.trim() || customExercise.muscleGroups.length === 0 || creatingExercise}
+                className="create-exercise-btn"
+              >
+                {creatingExercise ? 'Creating...' : 'Create Exercise'}
+              </button>
+              <button
+                onClick={() => setShowCustomForm(false)}
+                className="cancel-btn"
+              >
+                Cancel
               </button>
             </div>
-          ) : (
-            filteredExercises.map(exercise => (
-              <div
-                key={exercise.id}
-                className="exercise-item"
-                onClick={() => handleExerciseSelect(exercise)}
-              >
-                <div className="exercise-info">
-                  <h4>{exercise.name.toUpperCase()}</h4>
-                  <div className="exercise-details">
-                    <span className="muscle-groups">
-                      {exercise.muscle_groups.join(', ')}
-                    </span>
-                    <span className="category">{exercise.category}</span>
-                  </div>
-                  {exercise.description && (
-                    <p className="description">{exercise.description}</p>
-                  )}
-                </div>
+          </div>
+        ) : (
+          <div className="exercise-list">
+            {filteredExercises.length === 0 ? (
+              <div className="no-exercises">
+                <p>No exercises found matching your criteria.</p>
+                <button 
+                  onClick={() => {
+                    setSearchTerm('')
+                    setSelectedMuscleGroup('all')
+                  }}
+                  className="clear-filters-btn"
+                >
+                  Clear Filters
+                </button>
               </div>
-            ))
-          )}
-        </div>
-
-        <div className="exercise-selector-footer">
-          <button 
-            className="add-custom-exercise-btn"
-            onClick={() => {
-              // TODO: Implement custom exercise creation
-              console.log('Add custom exercise functionality')
-            }}
-          >
-            + Add Custom Exercise
-          </button>
-        </div>
+            ) : (
+              filteredExercises.map(exercise => (
+                <div
+                  key={exercise.id}
+                  className="exercise-item"
+                  onClick={() => handleExerciseSelect(exercise)}
+                >
+                  <div className="exercise-info">
+                    <h4>{exercise.name.toUpperCase()}</h4>
+                    <div className="exercise-details">
+                      <span className="muscle-groups">
+                        {exercise.muscle_groups.join(', ')}
+                      </span>
+                      <span className="category">{exercise.category}</span>
+                    </div>
+                    {exercise.description && (
+                      <p className="description">{exercise.description}</p>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

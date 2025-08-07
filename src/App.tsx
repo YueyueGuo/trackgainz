@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { UnitProvider } from './contexts/UnitContext'
 import { AuthPage } from './components/Auth/AuthPage'
 import { Header } from './components/Layout/Header'
 import { BottomNav } from './components/Layout/BottomNav'
@@ -41,17 +42,17 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="app-container">
-      <Header />
-      <main className="main-content">
+    <UnitProvider>
+      <div className="app">
+        <Header />
         {renderCurrentPage()}
-      </main>
-      <BottomNav currentView={currentView} onViewChange={setCurrentView} />
-    </div>
+        <BottomNav currentView={currentView} onViewChange={setCurrentView} />
+      </div>
+    </UnitProvider>
   )
 }
 
-function App() {
+const App: React.FC = () => {
   return (
     <AuthProvider>
       <AppContent />

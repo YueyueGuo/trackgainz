@@ -5045,6 +5045,20 @@ body {
   text-align: right;
 }
 
+.workout-stats-condensed {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.condensed-stats {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .stat-item {
   display: flex;
   flex-direction: column;
@@ -5799,3 +5813,240 @@ body {
   border-color: #000;
 }
 
+/* Custom Exercise Form Styles */
+.custom-exercise-form {
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin: 10px 0;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.custom-exercise-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.custom-exercise-header h4 {
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.custom-exercise-form .form-group {
+  margin-bottom: 12px;
+}
+
+.custom-exercise-form .form-group label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.custom-exercise-form .form-input,
+.custom-exercise-form .form-select,
+.custom-exercise-form .form-textarea {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: 'JetBrains Mono', monospace;
+  background: white;
+  color: #333;
+}
+
+.custom-exercise-form .form-input:focus,
+.custom-exercise-form .form-select:focus,
+.custom-exercise-form .form-textarea:focus {
+  outline: none;
+  border-color: #FF8C00;
+  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+}
+
+.custom-exercise-form .form-textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.muscle-groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.muscle-group-btn {
+  padding: 6px 8px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: #333;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: capitalize;
+}
+
+.muscle-group-btn:hover {
+  border-color: #FF8C00;
+  background: #fff8f0;
+}
+
+.muscle-group-btn.selected {
+  background: #FF8C00;
+  color: white;
+  border-color: #FF8C00;
+}
+
+.custom-exercise-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.create-exercise-btn {
+  flex: 1;
+  padding: 10px 16px;
+  background: #2A9D8F;
+  color: white;
+  border: 2px solid #2A9D8F;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.create-exercise-btn:hover:not(:disabled) {
+  background: #248277;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
+}
+
+.create-exercise-btn:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cancel-btn {
+  padding: 10px 16px;
+  background: #E76F51;
+  color: white;
+  border: 2px solid #E76F51;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: #d65a3f;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(231, 111, 81, 0.3);
+}
+
+/* Responsive adjustments for custom exercise form */
+@media (max-width: 768px) {
+  .custom-exercise-form {
+    padding: 12px;
+    max-height: calc(100vh - 150px);
+  }
+
+  .muscle-groups-grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 5px;
+  }
+
+  .muscle-group-btn {
+    padding: 5px 6px;
+    font-size: 0.65rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .custom-exercise-actions {
+    flex-direction: column;
+  }
+
+  .create-exercise-btn,
+  .cancel-btn {
+    width: 100%;
+  }
+}
+
+/* Dark mode support for custom exercise form */
+@media (prefers-color-scheme: dark) {
+  .custom-exercise-form {
+    background: #2A2A2A;
+  }
+
+  .custom-exercise-header h4 {
+    color: #F5F5F5;
+  }
+
+  .custom-exercise-form .form-group label {
+    color: #F5F5F5;
+  }
+
+  .custom-exercise-form .form-input,
+  .custom-exercise-form .form-select,
+  .custom-exercise-form .form-textarea {
+    background: #333;
+    color: #F5F5F5;
+    border-color: #555;
+  }
+
+  .custom-exercise-form .form-input:focus,
+  .custom-exercise-form .form-select:focus,
+  .custom-exercise-form .form-textarea:focus {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+  }
+
+  .muscle-group-btn {
+    background: #333;
+    color: #F5F5F5;
+    border-color: #555;
+  }
+
+  .muscle-group-btn:hover {
+    border-color: #FF8C00;
+    background: #3A3A3A;
+  }
+
+  .muscle-group-btn.selected {
+    background: #FF8C00;
+    color: #000;
+    border-color: #FF8C00;
+  }
+}
