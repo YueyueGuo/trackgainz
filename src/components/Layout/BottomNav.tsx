@@ -1,15 +1,15 @@
 import React from 'react'
-import { PencilLine, Dumbbell, BarChart3, UserRound } from 'lucide-react'
+import { PencilLine, History, BarChart3, UserRound } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
 interface BottomNavProps {
-  currentView: 'record' | 'workouts' | 'progress' | 'profile';
-  onViewChange: (view: 'record' | 'workouts' | 'progress' | 'profile') => void;
+  currentView: 'record' | 'history' | 'progress' | 'profile';
+  onViewChange: (view: 'record' | 'history' | 'progress' | 'profile') => void;
 }
 
 const tabs = [
   { key: 'record' as const, label: "Record", icon: PencilLine },
-  { key: 'workouts' as const, label: "Workouts", icon: Dumbbell },
+  { key: 'history' as const, label: "History", icon: History },
   { key: 'progress' as const, label: "Progress", icon: BarChart3 },
   { key: 'profile' as const, label: "Profile", icon: UserRound },
 ]
@@ -17,7 +17,7 @@ const tabs = [
 export const BottomNav: React.FC<BottomNavProps> = ({ currentView, onViewChange }) => {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-lg px-4 pb-4">
-      <div className="flex items-center justify-around rounded-2xl border border-zinc-800/60 bg-zinc-950/80 px-2 py-2 shadow-brand backdrop-blur-md">
+      <div className="flex items-center justify-around rounded-2xl border border-zinc-800/60 bg-zinc-950/80 px-2 py-2 shadow-[0_20px_60px_-20px_rgba(255,153,0,0.35)] backdrop-blur-md">
         {tabs.map(({ key, label, icon: Icon }) => {
           const active = currentView === key
           return (
@@ -52,4 +52,4 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentView, onViewChange 
       </div>
     </nav>
   )
-} 
+}

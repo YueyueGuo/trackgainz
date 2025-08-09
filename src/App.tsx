@@ -11,7 +11,7 @@ import { ProfilePage } from './pages/ProfilePage';
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth()
-  const [currentView, setCurrentView] = useState<'record' | 'workouts' | 'progress' | 'profile'>('record')
+  const [currentView, setCurrentView] = useState<'record' | 'history' | 'progress' | 'profile'>('record')
 
   if (loading) {
     return (
@@ -29,7 +29,7 @@ const AppContent: React.FC = () => {
     switch (currentView) {
       case 'record':
         return <RecordPage />
-      case 'workouts':
+      case 'history':
         return <WorkoutPage />
       case 'progress':
         return <ProgressPage />
