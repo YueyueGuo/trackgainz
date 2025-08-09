@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ChevronUp, ChevronDown, MessageSquare, Trash2, Plus, Check } from 'lucide-react'
+import { ChevronUp, ChevronDown, MessageSquare, Trash2, Plus, Check, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
@@ -27,9 +27,9 @@ interface ExerciseCardProps {
 }
 
 const SET_TYPE_CONFIG = {
-  regular: { symbol: 'W/F', label: 'Set Type' },
-  warmup: { symbol: 'W', label: 'Warm Up' },
-  failure: { symbol: 'F', label: 'To Failure' }
+  regular: { symbol: '', label: 'Working' },
+  warmup: { symbol: 'W', label: 'Warm-Up' },
+  failure: { symbol: 'F', label: 'Failure' }
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
@@ -82,14 +82,22 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">
             <button
-              onClick={() => onReorder?.('up')}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onReorder?.('up')
+              }}
               className="text-amber-100/60 hover:text-amber-100 disabled:opacity-30"
               disabled={isFirst || loading}
             >
               <ChevronUp className="h-4 w-4" />
             </button>
             <button
-              onClick={() => onReorder?.('down')}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onReorder?.('down')
+              }}
               className="text-amber-100/60 hover:text-amber-100 disabled:opacity-30"
               disabled={isLast || loading}
             >
@@ -108,9 +116,13 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
 
           <div className="flex gap-2">
             <Button
+              type="button"
               size="sm"
               variant="outline"
-              onClick={() => setShowNoteInput(!showNoteInput)}
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowNoteInput(!showNoteInput)
+              }}
               className="relative text-amber-100/60 hover:bg-brand-950/80 hover:text-amber-100 border-brand-700/50"
               disabled={loading}
             >
@@ -120,9 +132,13 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
               )}
             </Button>
             <Button
+              type="button"
               size="sm"
               variant="outline"
-              onClick={onRemove}
+              onClick={(e) => {
+                e.stopPropagation()
+                onRemove?.()
+              }}
               className="text-red-400/60 hover:bg-red-500/10 hover:text-red-400 border-red-500/30"
               disabled={loading}
             >
@@ -147,13 +163,25 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
               rows={2}
             />
             <div className="mt-2 flex gap-2">
-              <Button size="sm" onClick={handleSaveNote} className="bg-brand-500 hover:bg-brand-600">
+              <Button 
+                size="sm" 
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleSaveNote()
+                }} 
+                className="bg-brand-500 hover:bg-brand-600"
+              >
                 Save Note
               </Button>
               <Button 
                 size="sm" 
+                type="button"
                 variant="outline" 
-                onClick={() => setShowNoteInput(false)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowNoteInput(false)
+                }}
                 className="border-brand-700/50 text-amber-100/60 hover:bg-brand-950/80"
               >
                 Cancel
@@ -166,11 +194,12 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       {/* Sets Header */}
       <div className="relative border-b border-brand-800/30 px-4 py-2">
         <div className="grid grid-cols-12 gap-2 text-xs font-bold uppercase tracking-wide text-amber-100/80">
-          <div className="col-span-2">Set</div>
-          <div className="col-span-3">Weight</div>
-          <div className="col-span-3">Reps</div>
-          <div className="col-span-2">Type</div>
-          <div className="col-span-2">Done</div>
+          <div className="col-span-1 text-center">Set</div>
+          <div className="col-span-2 text-center">Weight</div>
+          <div className="col-span-2 text-center">Reps</div>
+          <div className="col-span-2 text-center">Type</div>
+          <div className="col-span-2 text-center">Done</div>
+          <div className="col-span-1 text-center">Remove</div>
         </div>
       </div>
 
@@ -186,13 +215,13 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
               set.completed ? 'bg-green-500/10 ring-1 ring-green-500/20' : 'bg-brand-950/50'
             }`}
           >
-              <div className="col-span-2 flex items-center">
+              <div className="col-span-1 flex items-center justify-center">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-950/80 text-sm font-bold text-amber-100">
                   {setIndex + 1}
                 </div>
               </div>
 
-              <div className="col-span-3">
+              <div className="col-span-2">
                 <Input
                   type="number"
                   value={set.weight || ''}
@@ -209,7 +238,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
                 />
               </div>
 
-              <div className="col-span-3">
+              <div className="col-span-2">
                 <Input
                   type="number"
                   value={set.reps || ''}
@@ -227,24 +256,30 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
               </div>
 
               <div className="col-span-2">
-                <button
-                  onClick={() => onCycleSetType?.(setIndex)}
-                  className={`h-8 w-full rounded border border-brand-700 bg-brand-950/80 text-xs text-amber-50 hover:bg-brand-900/80 transition-colors ${
-                    set.type === 'warmup' ? 'bg-amber-500/20 text-amber-300' :
-                    set.type === 'failure' ? 'bg-red-500/20 text-red-300' : ''
-                  }`}
+                <select
+                  value={set.type}
+                  onChange={(e) => {
+                    e.stopPropagation()
+                    onUpdateSet?.(setIndex, 'type', e.target.value as SetType)
+                  }}
+                  className="h-8 w-full rounded border border-brand-700 bg-brand-950/80 text-xs text-amber-50 hover:bg-brand-900/80 transition-colors"
                   disabled={loading}
-                  title={SET_TYPE_CONFIG[set.type as keyof typeof SET_TYPE_CONFIG]?.label}
                 >
-                  {SET_TYPE_CONFIG[set.type as keyof typeof SET_TYPE_CONFIG]?.symbol}
-                </button>
+                  <option value="regular">Working</option>
+                  <option value="warmup">Warm-Up</option>
+                  <option value="failure">Failure</option>
+                </select>
               </div>
 
               <div className="col-span-2 flex items-center justify-center">
                 <motion.button
+                  type="button"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => handleSetComplete(setIndex)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleSetComplete(setIndex)
+                  }}
                   className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
                     set.completed
                       ? 'bg-green-500 text-white'
@@ -256,26 +291,35 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
                 </motion.button>
               </div>
 
-              {/* Remove Set Button - only show if more than 1 set */}
-              {sets.length > 1 && (
-                <div className="col-span-12 flex justify-end mt-1">
-                  <button
-                    onClick={() => onRemoveSet?.(setIndex)}
-                    className="text-red-400/60 hover:text-red-400 text-xs"
+              <div className="col-span-1 flex items-center justify-center">
+                {sets.length > 1 && (
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onRemoveSet?.(setIndex)
+                    }}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-400/30 bg-transparent text-red-400 hover:bg-red-400/10 transition-colors"
                     disabled={loading}
                     title="Remove Set"
                   >
-                    Remove Set
-                  </button>
-                </div>
-              )}
+                    <X className="h-3 w-3" />
+                  </motion.button>
+                )}
+              </div>
             </motion.div>
         ))}
 
         {/* Add Set Button */}
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Button
-            onClick={onAddSet}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onAddSet?.()
+            }}
             variant="outline"
             className="mt-2 w-full border-brand-400/30 bg-brand-500/10 text-brand-300 hover:bg-brand-500/20"
             disabled={loading}

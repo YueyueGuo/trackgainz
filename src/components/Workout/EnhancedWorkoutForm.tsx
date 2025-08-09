@@ -367,7 +367,7 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user) return
+    if (!user || loading || showCelebration) return
 
     setLoading(true)
     setError('')
@@ -423,14 +423,33 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
           animate={{ opacity: 1, y: 0 }}
           className="mb-4 flex items-center justify-between"
         >
-          <Button variant="outline" size="sm" onClick={handleBack} className="text-amber-100 border-brand-700/50 bg-brand-500/10 hover:bg-brand-500/20">
+          <Button 
+            type="button"
+            variant="outline" 
+            size="sm" 
+            onClick={(e) => {
+              e.stopPropagation()
+              handleBack()
+            }} 
+            className="text-amber-100 border-brand-700/50 bg-brand-500/10 hover:bg-brand-500/20"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
           <h1 className="bg-gradient-to-r from-brand-300 via-amber-300 to-brand-500 bg-clip-text text-xl font-black uppercase tracking-tight text-transparent">
             {isFreshWorkout ? 'Fresh Workout' : (workoutSource ? 'Workout Active' : 'Log Workout')}
           </h1>
-          <Button size="sm" className="bg-brand-500 hover:bg-brand-600" onClick={handleSubmit} disabled={loading || exercises.length === 0}>
+          <Button 
+            size="sm" 
+            className="bg-brand-500 hover:bg-brand-600" 
+            onClick={(e) => {
+              e.stopPropagation()
+              if (!loading && !showCelebration) {
+                handleSubmit(e)
+              }
+            }} 
+            disabled={loading || exercises.length === 0 || showCelebration}
+          >
             <Save className="mr-2 h-4 w-4" />
             Finish
           </Button>
@@ -506,7 +525,11 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
           className="mt-6 space-y-4"
         >
           <Button
-            onClick={addExercise}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              addExercise()
+            }}
             className="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3"
             disabled={loading}
           >

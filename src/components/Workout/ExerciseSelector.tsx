@@ -1,8 +1,20 @@
+"use client"
+
 import React, { useState, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X, Search, Check } from 'lucide-react'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 import { DatabaseExercise, MuscleGroup } from '../../types/workout'
 import { ExerciseService } from '../../services/exerciseService'
 import { EXERCISE_SEED_DATA } from '../../data/exerciseSeedData'
 import { useAuth } from '../../contexts/AuthContext'
+
+type MuscleGroupOption = {
+  id: MuscleGroup
+  name: string
+  selected: boolean
+}
 
 interface ExerciseSelectorProps {
   onExerciseSelect: (exerciseName: string, exerciseId: string) => void
@@ -16,46 +28,72 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
   currentExerciseName
 }) => {
   const { user } = useAuth()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<MuscleGroup | 'all'>('all')
+  const [searchQuery, setSearchQuery] = useState("")
   const [exercises, setExercises] = useState<DatabaseExercise[]>([])
   const [filteredExercises, setFilteredExercises] = useState<DatabaseExercise[]>([])
   const [loading, setLoading] = useState(true)
   const [useDatabase, setUseDatabase] = useState(true)
-  const [showCustomForm, setShowCustomForm] = useState(false)
   const [creatingExercise, setCreatingExercise] = useState(false)
 
   // Custom exercise form state
-  const [customExercise, setCustomExercise] = useState({
-    name: '',
-    muscleGroups: [] as MuscleGroup[],
-    category: 'compound' as 'compound' | 'isolation' | 'cardio' | 'bodyweight'
-  })
+  const [exerciseName, setExerciseName] = useState("")
+  const [category, setCategory] = useState<'compound' | 'isolation' | 'cardio' | 'bodyweight'>("compound")
+  const [muscleGroups, setMuscleGroups] = useState<MuscleGroupOption[]>([
+    { id: "chest", name: "Chest", selected: false },
+    { id: "back", name: "Back", selected: false },
+    { id: "shoulders", name: "Shoulders", selected: false },
+    { id: "biceps", name: "Biceps", selected: false },
+    { id: "triceps", name: "Triceps", selected: false },
+    { id: "forearms", name: "Forearms", selected: false },
+    { id: "abs", name: "Abs", selected: false },
+    { id: "obliques", name: "Obliques", selected: false },
+    { id: "quads", name: "Quads", selected: false },
+    { id: "hamstrings", name: "Hamstrings", selected: false },
+    { id: "glutes", name: "Glutes", selected: false },
+    { id: "calves", name: "Calves", selected: false },
+    { id: "traps", name: "Traps", selected: false },
+    { id: "lats", name: "Lats", selected: false },
+    { id: "deltoids", name: "Deltoids", selected: false },
+  ])
+
+  const showCreateForm = searchQuery.length > 0 && filteredExercises.length === 0
+
+  // Auto-populate exercise name when no results found
+  useEffect(() => {
+    if (showCreateForm) {
+      setExerciseName(searchQuery.toUpperCase())
+    }
+  }, [showCreateForm, searchQuery])
 
   useEffect(() => {
     loadExercises()
   }, [])
 
-  // Update custom exercise name when search term changes
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    debounce((searchTerm: string, allExercises: DatabaseExercise[]) => {
+      let searchResults = allExercises
+
+      if (searchTerm.trim()) {
+        searchResults = rankSearchResults(allExercises, searchTerm.trim())
+      }
+
+      setFilteredExercises(searchResults)
+    }, 300),
+    []
+  )
+
   useEffect(() => {
-    if (searchTerm.trim() && filteredExercises.length === 0) {
-      setCustomExercise(prev => ({ ...prev, name: searchTerm.trim().toUpperCase() }))
-      setShowCustomForm(true)
-    } else {
-      setShowCustomForm(false)
-    }
-  }, [searchTerm, filteredExercises.length])
+    debouncedSearch(searchQuery, exercises)
+  }, [searchQuery, exercises, debouncedSearch])
 
   const loadExercises = async () => {
     try {
       setLoading(true)
-      console.log('Loading exercises...')
       
       // Try to load from database first
       if (useDatabase) {
-        console.log('Attempting to load from database...')
         const dbExercises = await ExerciseService.getExercises()
-        console.log('Database exercises loaded:', dbExercises.length)
         if (dbExercises.length > 0) {
           setExercises(dbExercises)
           setFilteredExercises(dbExercises)
@@ -65,7 +103,6 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
       }
       
       // Fallback to seed data
-      console.log('Using seed data fallback...')
       const seedExercises: DatabaseExercise[] = EXERCISE_SEED_DATA.map(exercise => ({
         id: exercise.id,
         name: exercise.name,
@@ -81,14 +118,12 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
         last_used: null
       }))
       
-      console.log('Seed exercises loaded:', seedExercises.length)
       setExercises(seedExercises)
       setFilteredExercises(seedExercises)
       setUseDatabase(false)
     } catch (error) {
       console.error('Error loading exercises:', error)
       // Fallback to seed data on error
-      console.log('Using seed data due to error...')
       const seedExercises: DatabaseExercise[] = EXERCISE_SEED_DATA.map(exercise => ({
         id: exercise.id,
         name: exercise.name,
@@ -112,40 +147,9 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
     }
   }
 
-  // Debounced search function
-  const debouncedSearch = useCallback(
-    debounce((searchTerm: string, muscleGroup: MuscleGroup | 'all', allExercises: DatabaseExercise[]) => {
-      console.log('Search triggered:', { searchTerm, muscleGroup, totalExercises: allExercises.length })
-      let searchResults = allExercises
-
-      // First, apply search (independent of muscle group filter)
-      if (searchTerm.trim()) {
-        searchResults = rankSearchResults(allExercises, searchTerm.trim())
-        console.log('Search results after ranking:', searchResults.length)
-      }
-
-      // Then, apply muscle group filter to search results
-      if (muscleGroup !== 'all') {
-        searchResults = searchResults.filter(exercise =>
-          exercise.muscle_groups.includes(muscleGroup)
-        )
-        console.log('Search results after muscle group filter:', searchResults.length)
-      }
-
-      console.log('Final filtered exercises:', searchResults.length)
-      setFilteredExercises(searchResults)
-    }, 300),
-    []
-  )
-
-  useEffect(() => {
-    debouncedSearch(searchTerm, selectedMuscleGroup, exercises)
-  }, [searchTerm, selectedMuscleGroup, exercises, debouncedSearch])
-
   // Search ranking algorithm
   const rankSearchResults = (exercises: DatabaseExercise[], searchTerm: string) => {
     const term = searchTerm.toLowerCase()
-    console.log('Ranking exercises for term:', term)
     
     const ranked = exercises.map(exercise => {
       const name = exercise.name.toLowerCase()
@@ -154,17 +158,14 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
       // Exact prefix match (highest priority)
       if (name.startsWith(term)) {
         score += 100
-        console.log(`Prefix match: ${exercise.name} (score: ${score})`)
       }
       // Word boundary match (e.g., "dead" in "deadlift")
       else if (name.includes(` ${term}`) || name.includes(`-${term}`)) {
         score += 50
-        console.log(`Word boundary match: ${exercise.name} (score: ${score})`)
       }
       // Contains match (lowest priority)
       else if (name.includes(term)) {
         score += 10
-        console.log(`Contains match: ${exercise.name} (score: ${score})`)
       }
       
       return { exercise, score }
@@ -173,7 +174,6 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
     .sort((a, b) => b.score - a.score)
     .map(item => item.exercise)
     
-    console.log('Ranked results:', ranked.length, 'exercises')
     return ranked
   }
 
@@ -203,15 +203,25 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
     onClose()
   }
 
-  const handleCreateCustomExercise = async () => {
-    if (!user || !customExercise.name.trim()) return
+  const toggleMuscleGroup = (id: MuscleGroup) => {
+    setMuscleGroups((prev) => prev.map((group) => 
+      group.id === id ? { ...group, selected: !group.selected } : group
+    ))
+  }
+
+  const handleCreateExercise = async () => {
+    if (!user || !exerciseName.trim()) return
+
+    const selectedMuscleGroups = muscleGroups.filter((group) => group.selected).map((group) => group.id)
+
+    if (selectedMuscleGroups.length === 0) return
 
     setCreatingExercise(true)
     try {
       const newExercise = await ExerciseService.createExercise({
-        name: customExercise.name.trim(),
-        muscle_groups: customExercise.muscleGroups,
-        category: customExercise.category,
+        name: exerciseName.trim(),
+        muscle_groups: selectedMuscleGroups,
+        category: category,
         equipment: [],
         difficulty: 'beginner',
         description: ''
@@ -224,6 +234,12 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
       // Select the new exercise
       onExerciseSelect(newExercise.name.toUpperCase(), newExercise.id)
       onClose()
+
+      // Reset form
+      setSearchQuery("")
+      setExerciseName("")
+      setCategory("compound")
+      setMuscleGroups((prev) => prev.map((group) => ({ ...group, selected: false })))
     } catch (error) {
       console.error('Error creating custom exercise:', error)
       alert('Failed to create custom exercise. Please try again.')
@@ -232,165 +248,254 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
     }
   }
 
-  const toggleMuscleGroup = (group: MuscleGroup) => {
-    setCustomExercise(prev => ({
-      ...prev,
-      muscleGroups: prev.muscleGroups.includes(group)
-        ? prev.muscleGroups.filter(g => g !== group)
-        : [...prev.muscleGroups, group]
-    }))
-  }
-
-  const muscleGroups: (MuscleGroup | 'all')[] = [
-    'all', 'chest', 'back', 'shoulders', 'biceps', 'triceps',
-    'forearms', 'abs', 'obliques', 'quads', 'hamstrings',
-    'glutes', 'calves', 'traps', 'lats', 'deltoids'
-  ]
+  const selectedCount = muscleGroups.filter((group) => group.selected).length
+  const canCreate = exerciseName.trim().length > 0 && selectedCount > 0
 
   if (loading) {
     return (
-      <div className="exercise-selector-overlay">
-        <div className="exercise-selector">
-          <div className="loading">Loading exercises...</div>
-        </div>
-      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: "100%" }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: "100%" }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-lg"
+        >
+          <div className="relative h-[calc(100dvh-env(safe-area-inset-bottom))] overflow-hidden bg-[linear-gradient(135deg,#2f1808_0%,#1a0f06_100%)]">
+            <div className="flex items-center justify-center h-full">
+              <div className="text-amber-100 text-lg font-semibold">Loading exercises...</div>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
     )
   }
 
   return (
-    <div className="exercise-selector-overlay" onClick={onClose}>
-      <div className="exercise-selector" onClick={(e) => e.stopPropagation()}>
-        <div className="exercise-selector-header">
-          <h3>Select Exercise</h3>
-          <button className="close-button" onClick={onClose}>×</button>
-        </div>
+    <>
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm"
+        />
 
-        <div className="exercise-selector-search">
-          <input
-            type="text"
-            placeholder="Search exercises..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-            autoFocus
-          />
-        </div>
+        {/* Modal */}
+        <motion.div
+          initial={{ opacity: 0, y: "100%" }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: "100%" }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-lg"
+        >
+          <div className="relative h-[calc(100dvh-env(safe-area-inset-bottom))] overflow-hidden bg-[linear-gradient(135deg,#2f1808_0%,#1a0f06_100%)]">
+            <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-[#ffb547]/10" />
 
-        {!showCustomForm && (
-          <div className="exercise-selector-filters">
-            <select
-              value={selectedMuscleGroup}
-              onChange={(e) => setSelectedMuscleGroup(e.target.value as MuscleGroup | 'all')}
-              className="muscle-group-filter"
-            >
-              {muscleGroups.map(group => (
-                <option key={group} value={group}>
-                  {group === 'all' ? 'All Muscle Groups' : group.charAt(0).toUpperCase() + group.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {showCustomForm ? (
-          <div className="custom-exercise-form">
-            <div className="custom-exercise-header">
-              <h4>No results found. Want to add new exercise?</h4>
-            </div>
-
-            <div className="form-group">
-              <label>Exercise Name</label>
-              <input
-                type="text"
-                value={customExercise.name}
-                onChange={(e) => setCustomExercise(prev => ({ ...prev, name: e.target.value.toUpperCase() }))}
-                placeholder="e.g., CUSTOM EXERCISE"
-                className="form-input"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Muscle Groups</label>
-              <div className="muscle-groups-grid">
-                {muscleGroups.filter(group => group !== 'all').map(group => (
-                  <button
-                    key={group}
-                    type="button"
-                    onClick={() => toggleMuscleGroup(group as MuscleGroup)}
-                    className={`muscle-group-btn ${customExercise.muscleGroups.includes(group as MuscleGroup) ? 'selected' : ''}`}
-                  >
-                    {group.charAt(0).toUpperCase() + group.slice(1)}
-                  </button>
-                ))}
+            {/* Header */}
+            <div className="relative border-b border-[#5a3714]/50 bg-brand-500 p-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-black uppercase tracking-tight text-white">Select Exercise</h2>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  size="sm" 
+                  onClick={onClose} 
+                  className="text-white hover:bg-white/10 border-white/20"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
               </div>
             </div>
 
-            <div className="form-group">
-              <label>Category</label>
-              <select
-                value={customExercise.category}
-                onChange={(e) => setCustomExercise(prev => ({ ...prev, category: e.target.value as any }))}
-                className="form-select"
-              >
-                <option value="compound">Compound</option>
-                <option value="isolation">Isolation</option>
-                <option value="cardio">Cardio</option>
-                <option value="bodyweight">Bodyweight</option>
-              </select>
+            {/* Search */}
+            <div className="relative p-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-900" />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search exercises..."
+                  className="border-2 border-amber-400 bg-amber-300 pl-10 text-amber-900 placeholder:text-amber-700 focus-visible:ring-amber-500"
+                  autoFocus
+                />
+              </div>
             </div>
 
-            <div className="custom-exercise-actions">
-              <button
-                onClick={handleCreateCustomExercise}
-                disabled={!customExercise.name.trim() || customExercise.muscleGroups.length === 0 || creatingExercise}
-                className="create-exercise-btn"
-              >
-                {creatingExercise ? 'Creating...' : 'Create Exercise'}
-              </button>
-              <button
-                onClick={() => setShowCustomForm(false)}
-                className="cancel-btn"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="exercise-list">
-            {filteredExercises.length === 0 ? (
-              <div className="no-exercises">
-                <p>No exercises found matching your criteria.</p>
-                <button 
-                  onClick={() => {
-                    setSearchTerm('')
-                    setSelectedMuscleGroup('all')
-                  }}
-                  className="clear-filters-btn"
-                >
-                  Clear Filters
-                </button>
-              </div>
-            ) : (
-              filteredExercises.map(exercise => (
-                <div
-                  key={exercise.id}
-                  className="exercise-item"
-                  onClick={() => handleExerciseSelect(exercise)}
-                >
-                  <div className="exercise-info">
-                    <h4>{exercise.name.toUpperCase()}</h4>
-                    <div className="exercise-details">
-                      <span className="muscle-groups">
-                        {exercise.muscle_groups.join(', ')}
-                      </span>
+            {/* Content */}
+            <div className="relative flex-1 overflow-y-auto px-4 pb-6" style={{ maxHeight: "calc(100dvh - 140px)" }}>
+              {showCreateForm ? (
+                /* Create New Exercise Form */
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                  <div className="text-center">
+                    <h3 className="text-md font-bold uppercase tracking-wide text-amber-50">
+                      No Results Found. Want to Add New Exercise?
+                    </h3>
+                  </div>
+
+                  {/* Exercise Name */}
+                  <div>
+                    <label className="mb-2 block text-sm font-bold uppercase tracking-wide text-amber-100">
+                      Exercise Name
+                    </label>
+                    <Input
+                      value={exerciseName}
+                      onChange={(e) => setExerciseName(e.target.value.toUpperCase())}
+                      className="border-[#6b3a0e] bg-[#241307] text-amber-50 placeholder:text-amber-200/60 focus-visible:ring-brand-500"
+                    />
+                  </div>
+
+                  {/* Muscle Groups */}
+                  <div>
+                    <label className="mb-2 block text-sm font-bold uppercase tracking-wide text-amber-100">
+                      Muscle Groups
+                    </label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {muscleGroups.map((group) => (
+                        <motion.button
+                          key={group.id}
+                          type="button"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => toggleMuscleGroup(group.id)}
+                          className={`relative overflow-hidden rounded-lg border p-2 text-xs font-semibold transition-all ${
+                            group.selected
+                              ? "border-brand-400/50 bg-brand-500/20 text-brand-300"
+                              : "border-[#6b3a0e]/50 bg-[#241307]/50 text-amber-100/70 hover:bg-[#241307]"
+                          }`}
+                        >
+                          <span className="relative z-10 flex items-center justify-center">
+                            {group.selected && <Check className="mr-1 h-3 w-3" />}
+                            {group.name}
+                          </span>
+                        </motion.button>
+                      ))}
                     </div>
                   </div>
+
+                  {/* Category */}
+                  <div>
+                    <label className="mb-2 block text-sm font-bold uppercase tracking-wide text-amber-100">
+                      Category
+                    </label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value as any)}
+                      className="w-full rounded-lg border border-[#6b3a0e] bg-[#241307] p-3 text-amber-50 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    >
+                      <option value="compound">Compound</option>
+                      <option value="isolation">Isolation</option>
+                      <option value="bodyweight">Bodyweight</option>
+                      <option value="cardio">Cardio</option>
+                    </select>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="space-y-3 pt-4">
+                    <Button
+                      type="button"
+                      onClick={handleCreateExercise}
+                      disabled={!canCreate || creatingExercise}
+                      size="lg"
+                      className={`h-12 w-full font-bold uppercase tracking-wide ${
+                        canCreate && !creatingExercise
+                          ? "bg-brand-500 text-gray-800 hover:bg-brand-400"
+                          : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                      }`}
+                    >
+                      {creatingExercise ? 'Creating...' : 'Create Exercise'}
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={onClose}
+                      size="lg"
+                      className="h-12 w-full bg-red-500 font-bold uppercase tracking-wide text-white hover:bg-red-600"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </motion.div>
+              ) : filteredExercises.length > 0 ? (
+                /* Search Results */
+                <div className="space-y-2">
+                  {filteredExercises.map((exercise) => (
+                    <motion.button
+                      key={exercise.id}
+                      type="button"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleExerciseSelect(exercise)}
+                      className="w-full rounded-lg border border-[#6b3a0e]/50 bg-[#241307]/50 p-4 text-left transition-all hover:bg-[#241307] hover:ring-1 hover:ring-brand-400/30"
+                    >
+                      <div className="font-semibold text-amber-50">{exercise.name}</div>
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        {exercise.muscle_groups.map((group) => (
+                          <span
+                            key={group}
+                            className="rounded-full bg-brand-500/20 px-2 py-1 text-xs font-medium text-brand-300"
+                          >
+                            {group}
+                          </span>
+                        ))}
+                        <span className="rounded-full bg-amber-500/20 px-2 py-1 text-xs font-medium text-amber-300">
+                          {exercise.category}
+                        </span>
+                        {exercise.usage_count > 0 && (
+                          <span className="rounded-full bg-green-500/20 px-2 py-1 text-xs font-medium text-green-300">
+                            {exercise.usage_count} uses
+                          </span>
+                        )}
+                      </div>
+                    </motion.button>
+                  ))}
                 </div>
-              ))
-            )}
+              ) : (
+                /* Default State */
+                <div className="space-y-2">
+                  <div className="mb-3 text-xs font-bold uppercase tracking-wide text-amber-100/60">
+                    Popular Exercises
+                  </div>
+                  {exercises.slice(0, 10).map((exercise) => (
+                    <motion.button
+                      key={exercise.id}
+                      type="button"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleExerciseSelect(exercise)}
+                      className="w-full rounded-lg border border-[#6b3a0e]/50 bg-[#241307]/50 p-4 text-left transition-all hover:bg-[#241307] hover:ring-1 hover:ring-brand-400/30"
+                    >
+                      <div className="font-semibold text-amber-50">{exercise.name}</div>
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        {exercise.muscle_groups.map((group) => (
+                          <span
+                            key={group}
+                            className="rounded-full bg-brand-500/20 px-2 py-1 text-xs font-medium text-brand-300"
+                          >
+                            {group}
+                          </span>
+                        ))}
+                        <span className="rounded-full bg-amber-500/20 px-2 py-1 text-xs font-medium text-amber-300">
+                          {exercise.category}
+                        </span>
+                        {exercise.usage_count > 0 && (
+                          <span className="rounded-full bg-green-500/20 px-2 py-1 text-xs font-medium text-green-300">
+                            {exercise.usage_count} uses
+                          </span>
+                        )}
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div>
-    </div>
+        </motion.div>
+    </>
   )
-} 
+}
