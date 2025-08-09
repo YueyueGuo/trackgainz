@@ -242,15 +242,37 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
                 className="enhanced-exercise-name-input"
                 disabled={loading}
               />
+              <div className="flex gap-2">
               <button
-                type="button"
-                onClick={() => removeExercise(exerciseIndex)}
-                className="enhanced-remove-exercise-btn"
-                disabled={loading}
-                title="Remove Exercise"
-              >
-                REMOVE
-              </button>
+                    type="button"
+                    onClick={() => removeExercise(exerciseIndex)}
+                    className="btn-brutalist bg-red-700 text-white border-2 border-black px-3 py-2 text-sm font-bold"
+                    disabled={loading}
+                    title="Remove Exercise"
+                  >
+                    REMOVE EXERCISE
+                  </button>
+                {/* comment out for now until we re-add the functionality *
+                <button
+                  type="button"
+                  onClick={() => moveExerciseUp(exerciseIndex)}
+                  className="btn-brutalist bg-secondary text-white px-2 py-2 text-lg"
+                  disabled={loading || exerciseIndex === 0}
+                  title="Move Up"
+                >
+                  ⬆️
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveExerciseDown(exerciseIndex)}
+                  className="btn-brutalist bg-secondary text-white px-2 py-2 text-lg"
+                  disabled={loading || exerciseIndex === exercises.length - 1}
+                  title="Move Down"
+                >
+                  ⬇️
+                </button>
+                */}
+              </div>
             </div>
 
             <div className="enhanced-sets-container">
@@ -341,7 +363,7 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
           <button
             type="button"
             onClick={addExercise}
-            className="enhanced-add-exercise-btn"
+            className="btn-brutalist btn-primary px-5 py-3"
             disabled={loading}
           >
             ADD EXERCISE
@@ -358,7 +380,7 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
             </button>
             <button 
               type="submit" 
-              className="enhanced-submit-workout-btn"
+              className="btn-brutalist btn-success px-6 py-4 w-full"
               disabled={loading || !templateName.trim() || exercises.length === 0}
             >
               {loading ? 'SAVING...' : 'SAVE TEMPLATE'}

@@ -12,7 +12,10 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
+    "canvas-confetti": "^1.9.3",
     "chart.js": "^4.5.0",
+    "framer-motion": "^11.15.0",
+    "lucide-react": "^0.468.0",
     "react": "^19.1.1",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.1.1",
@@ -47,6 +50,9 @@
     ]
   },
   "devDependencies": {
-    "ts-node": "^10.9.2"
+    "@types/canvas-confetti": "^1.6.4",
+    "@vitejs/plugin-react": "^5.0.0",
+    "ts-node": "^10.9.2",
+    "vite": "^7.1.0"
   }
 }

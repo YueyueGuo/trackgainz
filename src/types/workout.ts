@@ -12,6 +12,7 @@ export interface Exercise {
   exerciseId?: string // Reference to exercise database
   sets: WorkoutSet[]
   muscleGroups?: MuscleGroup[] // Auto-populated from exercise database
+  note?: string // Exercise-specific notes
 }
 
 export interface WorkoutData {

@@ -8,7 +8,6 @@ import { RecordPage } from './pages/RecordPage'
 import { WorkoutPage } from './pages/WorkoutPage'
 import { ProgressPage } from './pages/ProgressPage'
 import { ProfilePage } from './pages/ProfilePage';
-import './App.css'
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth()
@@ -44,7 +43,6 @@ const AppContent: React.FC = () => {
   return (
     <UnitProvider>
       <div className="app">
-        <Header />
         {renderCurrentPage()}
         <BottomNav currentView={currentView} onViewChange={setCurrentView} />
       </div>
