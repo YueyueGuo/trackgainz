@@ -26,7 +26,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "npm install --force && react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "migrate": "node src/scripts/migrateExercises.js"
@@ -51,8 +51,6 @@
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.6.4",
-    "@vitejs/plugin-react": "^5.0.0",
-    "ts-node": "^10.9.2",
-    "vite": "^7.1.0"
+    "ts-node": "^10.9.2"
   }
 }
