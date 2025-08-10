@@ -234,7 +234,7 @@ export const WorkoutDetail: React.FC<WorkoutDetailProps> = ({
                         <div className="text-center font-semibold text-amber-50">{set.weight || "BW"}</div>
                         <div className="text-center font-semibold text-amber-50">{set.reps}</div>
                         <div className="text-center text-xs text-amber-100/70">
-                          {set.type === "regular" ? "Work" : set.type === "warmup" ? "Warm" : set.type}
+                          {set.type === "working" ? "Work" : set.type === "warmup" ? "Warm" : set.type}
                         </div>
                         <div className="flex justify-center">
                           {set.completed ? (

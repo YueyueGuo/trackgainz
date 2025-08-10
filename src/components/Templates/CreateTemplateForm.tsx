@@ -11,9 +11,9 @@ interface CreateTemplateFormProps {
 }
 
 const SET_TYPE_CONFIG = {
-  regular: { symbol: 'W/F', label: 'Set Type' },
-  warmup: { symbol: 'W', label: 'Warm Up' },
-  failure: { symbol: 'F', label: 'To Failure' }
+  working: { symbol: 'Working', label: 'Type' },
+  warmup: { symbol: 'Warm-up', label: 'Type' },
+  failure: { symbol: 'Failure', label: 'Type' }
 }
 
 export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({ 
@@ -28,27 +28,30 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
   const [exercises, setExercises] = useState<Exercise[]>(
     initialExercises.length > 0 ? initialExercises : [
       {
+        id: '1',
         name: '',
         sets: [
-          { weight: 0, reps: 0, type: 'regular', completed: false },
-          { weight: 0, reps: 0, type: 'regular', completed: false },
-          { weight: 0, reps: 0, type: 'regular', completed: false }
+          { id: '1-1', weight: 0, reps: 0, type: 'working', completed: false },
+          { id: '1-2', weight: 0, reps: 0, type: 'working', completed: false },
+          { id: '1-3', weight: 0, reps: 0, type: 'working', completed: false }
         ]
       },
       {
+        id: '2',
         name: '',
         sets: [
-          { weight: 0, reps: 0, type: 'regular', completed: false },
-          { weight: 0, reps: 0, type: 'regular', completed: false },
-          { weight: 0, reps: 0, type: 'regular', completed: false }
+          { id: '2-1', weight: 0, reps: 0, type: 'working', completed: false },
+          { id: '2-2', weight: 0, reps: 0, type: 'working', completed: false },
+          { id: '2-3', weight: 0, reps: 0, type: 'working', completed: false }
         ]
       },
       {
+        id: '3',
         name: '',
         sets: [
-          { weight: 0, reps: 0, type: 'regular', completed: false },
-          { weight: 0, reps: 0, type: 'regular', completed: false },
-          { weight: 0, reps: 0, type: 'regular', completed: false }
+          { id: '3-1', weight: 0, reps: 0, type: 'working', completed: false },
+          { id: '3-2', weight: 0, reps: 0, type: 'working', completed: false },
+          { id: '3-3', weight: 0, reps: 0, type: 'working', completed: false }
         ]
       }
     ]
@@ -57,12 +60,14 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
   const [error, setError] = useState('')
 
   const addExercise = () => {
+    const exerciseId = Date.now().toString()
     const newExercise: Exercise = {
+      id: exerciseId,
       name: '',
       sets: [
-        { weight: 0, reps: 0, type: 'regular', completed: false },
-        { weight: 0, reps: 0, type: 'regular', completed: false },
-        { weight: 0, reps: 0, type: 'regular', completed: false }
+        { id: `${exerciseId}-1`, weight: 0, reps: 0, type: 'working', completed: false },
+        { id: `${exerciseId}-2`, weight: 0, reps: 0, type: 'working', completed: false },
+        { id: `${exerciseId}-3`, weight: 0, reps: 0, type: 'working', completed: false }
       ]
     }
     setExercises([...exercises, newExercise])
@@ -82,7 +87,13 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
   const addSet = (exerciseIndex: number) => {
     const updated = exercises.map((exercise, i) => {
       if (i === exerciseIndex) {
-        const newSet: WorkoutSet = { weight: 0, reps: 0, type: 'regular', completed: false }
+        const newSet: WorkoutSet = { 
+          id: `${exercise.id}-${Date.now()}`, 
+          weight: 0, 
+          reps: 0, 
+          type: 'working', 
+          completed: false 
+        }
         return { ...exercise, sets: [...exercise.sets, newSet] }
       }
       return exercise
@@ -118,7 +129,7 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
 
   const cycleSetType = (exerciseIndex: number, setIndex: number) => {
     const currentType = exercises[exerciseIndex].sets[setIndex].type
-    const typeOrder: SetType[] = ['regular', 'warmup', 'failure']
+    const typeOrder: SetType[] = ['working', 'warmup', 'failure']
     const currentIndex = typeOrder.indexOf(currentType)
     const nextType = typeOrder[(currentIndex + 1) % typeOrder.length]
     

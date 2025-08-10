@@ -1,6 +1,7 @@
-export type SetType = 'regular' | 'warmup' | 'failure'
+export type SetType = 'working' | 'warmup' | 'failure'
 
 export interface WorkoutSet {
+  id?: string // Optional for backwards compatibility
   weight: number
   reps: number
   type: SetType
@@ -8,6 +9,7 @@ export interface WorkoutSet {
 }
 
 export interface Exercise {
+  id?: string // Optional for backwards compatibility
   name: string
   exerciseId?: string // Reference to exercise database
   sets: WorkoutSet[]
