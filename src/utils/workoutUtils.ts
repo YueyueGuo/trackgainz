@@ -55,7 +55,10 @@ export const transformWorkoutToSummary = (workout: Workout): WorkoutSummary => {
   }
 
   // Generate workout name from exercises (take first exercise or generic name)
-  const workoutName = workout.exercises?.exercises?.[0]?.name?.split(' ')[0] + " Day" || "Workout"
+  const firstExerciseName = workout.exercises?.exercises?.[0]?.name
+  const workoutName = firstExerciseName 
+    ? firstExerciseName.split(' ')[0] + " Day" 
+    : "Workout"
 
   return {
     id: workout.id,

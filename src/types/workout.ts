@@ -94,8 +94,13 @@ export interface Profile {
   experience_level?: ExperienceLevel;
   primary_goal?: PrimaryGoal;
   unit_system?: UnitSystem; // 'metric' (kg/cm) or 'imperial' (lbs/ft+in)
-  height?: number; // in cm for metric, inches for imperial
-  weight?: number; // in kg for metric, lbs for imperial
-  created_at: string;
+  height_cm?: number; // Legacy field - height in cm
+  weight_kg?: number; // Legacy field - weight in kg
+  height?: number; // New field - unit depends on unit_system
+  weight?: number; // New field - unit depends on unit_system
+  bio?: string; // User's fitness journey description
+  workout_frequency?: string; // e.g., '1-2x', '3x', '4-5x', 'daily', '2x-daily'
+  preferred_time?: string; // e.g., 'early-morning', 'morning', 'afternoon', 'evening'
+  created_at?: string;
   updated_at: string;
 }

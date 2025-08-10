@@ -6,7 +6,7 @@ import { Input } from "../ui/input"
 import { WorkoutSummaryCard } from "./WorkoutSummaryCard"
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
-import { Workout } from '../../types/workout'
+import { Workout, Exercise } from '../../types/workout'
 import { transformWorkoutToSummary, calculateWorkoutStats } from '../../utils/workoutUtils'
 
 interface WorkoutHistoryProps {
@@ -22,34 +22,118 @@ export const WorkoutHistory: React.FC<WorkoutHistoryProps> = ({
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [filteredWorkouts, setFilteredWorkouts] = useState<Workout[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [totalWorkouts, setTotalWorkouts] = useState(0)
+  const [offset, setOffset] = useState(0)
+  const LIMIT = 10
 
-  const fetchWorkouts = async () => {
+  const cleanupIncompleteWorkouts = async () => {
     if (!user) return
 
     try {
-      setLoading(true)
+      // Get all workouts to identify incomplete ones
+      const { data: allWorkouts, error: fetchError } = await supabase
+        .from('workouts')
+        .select('*')
+        .eq('user_id', user.id)
+
+      if (fetchError) throw fetchError
+
+      // Identify incomplete workouts (zero duration + no exercises, or empty exercises array)
+      const incompleteWorkouts = (allWorkouts || []).filter(workout => {
+        const hasNoExercises = !workout.exercises?.exercises || 
+                               !Array.isArray(workout.exercises.exercises) || 
+                               workout.exercises.exercises.length === 0
+        const hasZeroDuration = !workout.duration || workout.duration === 0
+        
+        return hasNoExercises && hasZeroDuration
+      })
+
+      // Delete incomplete workouts
+      if (incompleteWorkouts.length > 0) {
+        console.log(`Cleaning up ${incompleteWorkouts.length} incomplete workout sessions`)
+        const workoutIds = incompleteWorkouts.map(w => w.id)
+        
+        const { error: deleteError } = await supabase
+          .from('workouts')
+          .delete()
+          .in('id', workoutIds)
+
+        if (deleteError) throw deleteError
+        console.log('Successfully cleaned up incomplete workouts')
+      }
+    } catch (error) {
+      console.error('Error cleaning up incomplete workouts:', error)
+    }
+  }
+
+  const fetchWorkouts = async (reset = true) => {
+    if (!user) return
+
+    try {
+      if (reset) {
+        setLoading(true)
+        setOffset(0)
+        
+        // Clean up incomplete workouts before fetching
+        await cleanupIncompleteWorkouts()
+      } else {
+        setLoadingMore(true)
+      }
+
+      // Get total count after cleanup
+      const { count, error: countError } = await supabase
+        .from('workouts')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+
+      if (countError) throw countError
+      setTotalWorkouts(count || 0)
+
+      // Then get the workouts with pagination
       const { data, error } = await supabase
         .from('workouts')
         .select('*')
         .eq('user_id', user.id)
         .order('date', { ascending: false })
+        .range(reset ? 0 : offset, reset ? LIMIT - 1 : offset + LIMIT - 1)
 
       if (error) throw error
 
-      setWorkouts(data || [])
-      setFilteredWorkouts(data || [])
+      // Filter: Only show workouts that have actual exercises
+      const validWorkouts = (data || []).filter(workout => 
+        workout.exercises?.exercises && 
+        Array.isArray(workout.exercises.exercises) && 
+        workout.exercises.exercises.length > 0
+      )
+
+      if (reset) {
+        setWorkouts(validWorkouts)
+        setFilteredWorkouts(validWorkouts)
+        setOffset(LIMIT)
+      } else {
+        const newWorkouts = [...workouts, ...validWorkouts]
+        setWorkouts(newWorkouts)
+        setFilteredWorkouts(newWorkouts)
+        setOffset(offset + LIMIT)
+      }
     } catch (error: any) {
       setError(error.message)
     } finally {
       setLoading(false)
+      setLoadingMore(false)
     }
   }
 
   useEffect(() => {
     fetchWorkouts()
-  }, [user, refreshTrigger])
+  }, [user, refreshTrigger]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleLoadMore = () => {
+    fetchWorkouts(false)
+  }
 
   useEffect(() => {
     if (searchTerm.trim() === '') {
@@ -232,8 +316,8 @@ export const WorkoutHistory: React.FC<WorkoutHistoryProps> = ({
           )}
         </motion.div>
 
-        {/* Load More - placeholder for future pagination */}
-        {filteredWorkouts.length >= 10 && (
+        {/* Load More - only show if there are more workouts available */}
+        {!searchTerm && workouts.length < totalWorkouts && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -243,10 +327,15 @@ export const WorkoutHistory: React.FC<WorkoutHistoryProps> = ({
             <Button
               type="button"
               variant="outline"
-              className="border-brand-400/30 bg-brand-500/10 text-brand-300 hover:bg-brand-500/20"
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+              className="border-brand-400/30 bg-brand-500/10 text-brand-300 hover:bg-brand-500/20 disabled:opacity-50"
             >
-              Load More Workouts
+              {loadingMore ? 'Loading...' : 'Load More Workouts'}
             </Button>
+            <p className="mt-2 text-xs text-amber-100/50">
+              Showing {workouts.length} of {totalWorkouts} workouts
+            </p>
           </motion.div>
         )}
       </section>
