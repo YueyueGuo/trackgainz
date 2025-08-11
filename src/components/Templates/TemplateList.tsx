@@ -209,35 +209,46 @@ export const TemplateList: React.FC<TemplateListProps> = ({
             filteredTemplates.map((template, index) => (
               <motion.div
                 key={template.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index, duration: 0.4 }}
-                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg dark:border-slate-700 dark:bg-slate-800 cursor-pointer"
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.1 * index, duration: 0.5, ease: "easeOut" }}
+                className="group relative overflow-hidden rounded-2xl border border-[#5a3714]/70 bg-[linear-gradient(135deg,#2f1808_0%,#1a0f06_100%)] p-4 shadow-[0_20px_60px_-20px_rgba(255,153,0,0.5)] transition-all hover:shadow-[0_25px_80px_-20px_rgba(255,153,0,0.6)] cursor-pointer"
                 onClick={() => onSelectTemplate(template)}
               >
-                <div className="mb-4 flex items-start justify-between">
+                <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-[#ffb547]/10" />
+
+                {/* Hover glow effect */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                >
+                  <span className="absolute -inset-1 bg-[radial-gradient(600px_200px_at_50%_0%,rgba(255,200,120,0.08),transparent_60%)]" />
+                </span>
+
+                <div className="relative">
+                <div className="mb-3 flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                    <h3 className="text-lg font-bold uppercase tracking-wide text-amber-50">
                       {template.name}
                     </h3>
                     {template.description && (
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                      <p className="text-sm text-amber-100/70">
                         {template.description}
                       </p>
                     )}
                   </div>
                   <button
                     onClick={(e) => deleteTemplate(template.id, template.name, e)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-500/20 rounded-lg"
                     title="Delete template"
                   >
-                    <Trash2 className="h-4 w-4 text-red-600" />
+                    <Trash2 className="h-4 w-4 text-red-400" />
                   </button>
                 </div>
 
-                <div className="mb-4 flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+                <div className="mb-4 flex items-center gap-4 text-sm text-amber-100/70">
                   <span className="flex items-center gap-1">
-                    <span className="font-semibold text-brand-600">
+                    <span className="font-semibold text-brand-400">
                       {template.exercises?.exercises?.length || 0}
                     </span>
                     exercises
@@ -245,30 +256,30 @@ export const TemplateList: React.FC<TemplateListProps> = ({
                   <span>Created {formatDate(template.created_at)}</span>
                 </div>
 
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {template.exercises?.exercises?.slice(0, 3).map((exercise, idx) => (
-                    <div key={idx} className="rounded-full bg-slate-100 dark:bg-slate-700 px-3 py-1 text-xs text-slate-700 dark:text-slate-300">
-                      {exercise.name}
-                    </div>
-                  ))}
-                  {template.exercises?.exercises?.length > 3 && (
-                    <div className="rounded-full bg-slate-100 dark:bg-slate-700 px-3 py-1 text-xs text-slate-500 dark:text-slate-400">
-                      +{template.exercises.exercises.length - 3} more
-                    </div>
-                  )}
+                <div className="mb-4">
+                  <div className="flex flex-wrap gap-1">
+                    {template.exercises?.exercises?.slice(0, 3).map((exercise, idx) => (
+                      <span key={idx} className="rounded-full bg-brand-500/20 px-2 py-1 text-xs font-medium text-brand-300">
+                        {exercise.name}
+                      </span>
+                    ))}
+                    {template.exercises?.exercises?.length > 3 && (
+                      <span className="rounded-full bg-amber-500/20 px-2 py-1 text-xs font-medium text-amber-300">
+                        +{template.exercises.exercises.length - 3} more
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <Button 
+                <div className="flex gap-2">
+                  <Button
                     onClick={() => onSelectTemplate(template)}
-                    size="sm"
-                    className="bg-brand-500 hover:bg-brand-600 text-white"
+                    className="group/button relative flex-1 overflow-hidden bg-brand-500 font-bold tracking-wide text-white shadow-[0_10px_30px_-10px_rgba(255,153,0,0.7)] transition-colors hover:bg-brand-600"
                   >
-                    Start Workout
+                    <span className="relative z-10">Use Template</span>
+                    <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.28),transparent)] transition-transform duration-1000 group-hover/button:translate-x-full" />
                   </Button>
-                  <div className="text-xs text-slate-400">
-                    Tap anywhere to use
-                  </div>
+                </div>
                 </div>
               </motion.div>
             ))

@@ -17,8 +17,14 @@ export interface Exercise {
   note?: string // Exercise-specific notes
 }
 
+export interface Superset {
+  id: string
+  exerciseIds: string[]
+}
+
 export interface WorkoutData {
   exercises: Exercise[]
+  supersets?: Superset[]
 }
 
 export interface PersonalRecord {

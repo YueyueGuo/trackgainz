@@ -1,6 +1,6 @@
 import React from "react"
 import { motion } from "framer-motion"
-import { ArrowLeft, Calendar, Clock, RotateCw, Share } from "lucide-react"
+import { ArrowLeft, Calendar, Clock, RotateCw, Share, Link2 } from "lucide-react"
 import { Button } from "../ui/button"
 import { Workout } from '../../types/workout'
 
@@ -74,6 +74,33 @@ export const WorkoutDetail: React.FC<WorkoutDetailProps> = ({
 
   // Generate workout name from first exercise
   const workoutName = workout.exercises?.exercises?.[0]?.name?.split(' ')[0] + " Day" || "Workout"
+
+  // Helper function to check if exercise is in a superset
+  const isExerciseInSuperset = (exerciseIndex: number): boolean => {
+    const supersets = workout.exercises?.supersets || []
+    const exercise = workout.exercises?.exercises?.[exerciseIndex]
+    if (!exercise?.id) return false
+    
+    return supersets.some(superset => superset.exerciseIds.includes(exercise.id!))
+  }
+
+  // Helper function to get superset info for an exercise
+  const getExerciseSuperset = (exerciseIndex: number) => {
+    const supersets = workout.exercises?.supersets || []
+    const exercise = workout.exercises?.exercises?.[exerciseIndex]
+    if (!exercise?.id) return null
+    
+    return supersets.find(superset => superset.exerciseIds.includes(exercise.id!))
+  }
+
+  // Helper function to check if this is the first exercise in a superset sequence
+  const isFirstInSuperset = (exerciseIndex: number): boolean => {
+    if (exerciseIndex === 0) return true
+    const currentSuperset = getExerciseSuperset(exerciseIndex)
+    const previousSuperset = getExerciseSuperset(exerciseIndex - 1)
+    
+    return !!currentSuperset && currentSuperset.id !== previousSuperset?.id
+  }
 
   const handleRepeatWorkout = () => {
     if (onRepeatWorkout) {
@@ -191,20 +218,37 @@ export const WorkoutDetail: React.FC<WorkoutDetailProps> = ({
             <h2 className="text-lg font-bold uppercase tracking-wide text-amber-50">Exercise Details</h2>
 
             {workout.exercises.exercises.map((exercise, exerciseIndex) => (
-              <motion.div
-                key={exerciseIndex}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * exerciseIndex, duration: 0.5, ease: "easeOut" }}
-                className="rounded-2xl border border-[#5a3714]/70 bg-[linear-gradient(135deg,#2f1808_0%,#1a0f06_100%)] shadow-[0_20px_60px_-20px_rgba(255,153,0,0.5)]"
-              >
-                <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-[#ffb547]/10" />
+              <div key={exerciseIndex} className="relative">
+                {/* Superset connector icon */}
+                {isExerciseInSuperset(exerciseIndex) && !isFirstInSuperset(exerciseIndex) && (
+                  <div className="relative -mb-2 flex justify-center">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 shadow-lg">
+                      <Link2 className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                )}
 
-                {/* Exercise Header */}
-                <div className="relative border-b border-[#5a3714]/50 p-4">
-                  <h3 className="text-lg font-bold uppercase tracking-wide text-amber-50">{exercise.name}</h3>
-                  {exercise.note && <p className="mt-1 text-sm text-amber-100/80 italic">"{exercise.note}"</p>}
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * exerciseIndex, duration: 0.5, ease: "easeOut" }}
+                  className="rounded-2xl border border-[#5a3714]/70 bg-[linear-gradient(135deg,#2f1808_0%,#1a0f06_100%)] shadow-[0_20px_60px_-20px_rgba(255,153,0,0.5)]"
+                >
+                  <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-[#ffb547]/10" />
+
+                  {/* Exercise Header */}
+                  <div className="relative border-b border-[#5a3714]/50 p-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-bold uppercase tracking-wide text-amber-50">{exercise.name}</h3>
+                      {isExerciseInSuperset(exerciseIndex) && (
+                        <div className="flex items-center gap-1 rounded-full bg-brand-500/20 px-2 py-1 text-xs font-semibold text-brand-400">
+                          <Link2 className="h-3 w-3" />
+                          Superset
+                        </div>
+                      )}
+                    </div>
+                    {exercise.note && <p className="mt-1 text-sm text-amber-100/80 italic">"{exercise.note}"</p>}
+                  </div>
 
                 {/* Sets */}
                 <div className="relative p-4">
@@ -247,7 +291,8 @@ export const WorkoutDetail: React.FC<WorkoutDetailProps> = ({
                     ))}
                   </div>
                 </div>
-              </motion.div>
+                </motion.div>
+              </div>
             ))}
           </motion.div>
         )}

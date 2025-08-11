@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Save, Trash2, Plus } from 'lucide-react'
+import { ArrowLeft, Save, Trash2, Plus, Link2 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { useUnits } from '../../contexts/UnitContext'
-import { Exercise, WorkoutSet, SetType } from '../../types/workout'
+import { Exercise, WorkoutSet, SetType, Superset } from '../../types/workout'
 import { ExerciseSelector } from './ExerciseSelector'
 import { WorkoutTimer } from './WorkoutTimer'
 import { WorkoutCelebration } from './WorkoutCelebration'
@@ -52,6 +52,9 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
   const [editingExerciseIndex, setEditingExerciseIndex] = useState<number | null>(null)
   const [showCelebration, setShowCelebration] = useState(false)
   const [showDiscardModal, setShowDiscardModal] = useState(false)
+  const [selectedExercises, setSelectedExercises] = useState<string[]>([])
+  const [isInSupersetMode, setIsInSupersetMode] = useState(false)
+  const [supersets, setSupersets] = useState<Superset[]>([])
 
   // Auto-add empty exercise for fresh workouts
   React.useEffect(() => {
@@ -198,6 +201,49 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
 
   const handleRemoveExercise = (exerciseId: string) => {
     setExercises(prev => prev.filter(ex => ex.id !== exerciseId))
+  }
+
+  // Superset handlers
+  const handleToggleExerciseSelection = (exerciseId: string) => {
+    setSelectedExercises(prev =>
+      prev.includes(exerciseId) 
+        ? prev.filter(id => id !== exerciseId)
+        : [...prev, exerciseId]
+    )
+  }
+
+  const handleCreateSuperset = () => {
+    if (selectedExercises.length >= 2) {
+      const newSuperset: Superset = {
+        id: Date.now().toString(),
+        exerciseIds: selectedExercises,
+      }
+      setSupersets(prev => [...prev, newSuperset])
+      setSelectedExercises([])
+      setIsInSupersetMode(false)
+    }
+  }
+
+  const handleToggleSupersetMode = () => {
+    setIsInSupersetMode(!isInSupersetMode)
+    setSelectedExercises([])
+  }
+
+  const handleCancelSupersetMode = () => {
+    setIsInSupersetMode(false)
+    setSelectedExercises([])
+  }
+
+  const handleBreakSuperset = (supersetId: string) => {
+    setSupersets(prev => prev.filter(superset => superset.id !== supersetId))
+  }
+
+  const getExerciseSuperset = (exerciseId: string) => {
+    return supersets.find(superset => superset.exerciseIds.includes(exerciseId))
+  }
+
+  const getIndividualExercises = () => {
+    return exercises.filter(exercise => !getExerciseSuperset(exercise.id!))
   }
 
   // Delete/Cancel workout function
@@ -493,7 +539,10 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
         start_time: startTime.toISOString(),
         end_time: endTime.toISOString(),
         duration: durationInSeconds,
-        exercises: { exercises: exercises.filter(ex => ex.name.trim()) }
+        exercises: { 
+          exercises: exercises.filter(ex => ex.name.trim()),
+          supersets: supersets
+        }
       }
 
       const { error: workoutError } = await supabase
@@ -511,6 +560,54 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
     }
   }
 
+  // SupersetGroup component
+  const SupersetGroup = ({
+    exercises: supersetExercises,
+    onBreakSuperset,
+  }: {
+    exercises: Exercise[]
+    onBreakSuperset: () => void
+  }) => (
+    <div className="rounded-2xl border-2 border-brand-500/30 bg-brand-500/5 p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Link2 className="h-4 w-4 text-brand-400" />
+          <span className="text-sm font-semibold text-brand-400">Superset</span>
+        </div>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-8 text-xs !text-slate-500 hover:text-red-400"
+          onClick={onBreakSuperset}
+        >
+          Unlink
+        </Button>
+      </div>
+      <div className="space-y-4">
+        {supersetExercises.map((exercise, index) => (
+          <div key={`superset-exercise-${exercise.id}`} className="relative">
+            {index > 0 && (
+              <div className="absolute -top-6 left-1/2 z-10 -translate-x-1/2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 shadow-lg ring-2 ring-brand-400/30">
+                  <Link2 className="h-4 w-4 text-white" />
+                </div>
+              </div>
+            )}
+            <ExerciseCard
+              {...exercise}
+              onUpdateName={(newName) => handleUpdateExerciseName(exercise.id!, newName)}
+              onAddSet={() => handleAddSet(exercise.id!)}
+              onUpdateSet={(setId, updates) => handleUpdateSet(exercise.id!, setId, updates)}
+              onRemoveSet={(setId) => handleRemoveSet(exercise.id!, setId)}
+              onAddNote={(note) => handleAddNote(exercise.id!, note)}
+              onOpenExerciseSelector={() => openExerciseSelector(exercise.id!)}
+              onRemove={() => handleRemoveExercise(exercise.id!)}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-slate-50 dark:bg-transparent">
@@ -524,7 +621,7 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
         />
       </div>
 
-      <section className="relative z-10 mx-auto max-w-lg px-4 pt-6 pb-24">
+      <section className="relative z-10 mx-auto max-w-lg px-4 pt-6 pb-32">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -551,10 +648,10 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
             <Button
               size="sm"
               variant="outline"
-              className="border-red-400/30 bg-red-500/10 text-red-300 hover:bg-red-500/20"
+              className="border-red-300 !bg-red-500/10 text-red-300 hover:bg-red-500/20"
               onClick={() => setShowDiscardModal(true)}
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-4 w-4 !text-red-300" />
             </Button>
             <Button 
               size="sm" 
@@ -582,6 +679,58 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
               onToggle={handleTimerToggle}
             />
           </div>
+        )}
+
+        {/* Superset Mode UI */}
+        {isInSupersetMode && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 rounded-lg border border-brand-400/30 bg-brand-500/10 p-4"
+          >
+            <div className="mb-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Link2 className="h-4 w-4 text-brand-400" />
+                <span className="font-medium text-brand-400">Create Superset</span>
+              </div>
+              <Button size="sm" variant="ghost" className="h-8 text-xs !text-slate-600" onClick={handleCancelSupersetMode}>
+                Cancel
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground mb-3">
+              Select 2 or more exercises to group them into a superset
+            </p>
+            {selectedExercises.length >= 2 && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-brand-400">
+                  {selectedExercises.length} exercises selected
+                </span>
+                <Button
+                  size="sm"
+                  className="h-8 bg-brand-500 text-xs hover:bg-brand-600"
+                  onClick={handleCreateSuperset}
+                >
+                  <Link2 className="mr-1 h-3 w-3" />
+                  Create Superset
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Create Superset Button */}
+        {!isInSupersetMode && getIndividualExercises().length >= 2 && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-brand-400/30 !bg-brand-300 !text-slate-600 hover:!bg-brand-500/20"
+              onClick={handleToggleSupersetMode}
+            >
+              <Link2 className="mr-2 h-4 w-4" />
+              Create Superset
+            </Button>
+          </motion.div>
         )}
 
       <form onSubmit={handleSubmit} className="enhanced-workout-form">
@@ -612,18 +761,43 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
           </motion.div>
         ) : (
           <div className="space-y-4">
-            {exercises.map((exercise) => (
-              <ExerciseCard
-                key={exercise.id}
-                {...exercise}
-                onUpdateName={(newName) => handleUpdateExerciseName(exercise.id!, newName)}
-                onAddSet={() => handleAddSet(exercise.id!)}
-                onUpdateSet={(setId, updates) => handleUpdateSet(exercise.id!, setId, updates)}
-                onRemoveSet={(setId) => handleRemoveSet(exercise.id!, setId)}
-                onAddNote={(note) => handleAddNote(exercise.id!, note)}
-                onOpenExerciseSelector={() => openExerciseSelector(exercise.id!)}
-                onRemove={() => handleRemoveExercise(exercise.id!)}
-              />
+            {/* Render Supersets */}
+            {supersets.map((superset) => {
+              const supersetExercises = exercises.filter(ex => superset.exerciseIds.includes(ex.id!))
+              return (
+                <SupersetGroup
+                  key={`superset-${superset.id}`}
+                  exercises={supersetExercises}
+                  onBreakSuperset={() => handleBreakSuperset(superset.id)}
+                />
+              )
+            })}
+
+            {/* Render Individual Exercises */}
+            {getIndividualExercises().map((exercise) => (
+              <div key={`individual-${exercise.id}`} className="relative">
+                {isInSupersetMode && (
+                  <div className="absolute -left-2 -top-2 z-10">
+                    <input
+                      type="checkbox"
+                      checked={selectedExercises.includes(exercise.id!)}
+                      onChange={() => handleToggleExerciseSelection(exercise.id!)}
+                      className="h-4 w-4 rounded border-brand-400/30 bg-brand-500/10 text-brand-500 focus:ring-brand-500"
+                    />
+                  </div>
+                )}
+
+                <ExerciseCard
+                  {...exercise}
+                  onUpdateName={(newName) => handleUpdateExerciseName(exercise.id!, newName)}
+                  onAddSet={() => handleAddSet(exercise.id!)}
+                  onUpdateSet={(setId, updates) => handleUpdateSet(exercise.id!, setId, updates)}
+                  onRemoveSet={(setId) => handleRemoveSet(exercise.id!, setId)}
+                  onAddNote={(note) => handleAddNote(exercise.id!, note)}
+                  onOpenExerciseSelector={() => openExerciseSelector(exercise.id!)}
+                  onRemove={() => handleRemoveExercise(exercise.id!)}
+                />
+              </div>
             ))}
           </div>
         )}
@@ -680,9 +854,9 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
             <button
               type="button"
               onClick={() => setShowDiscardModal(true)}
-              className="h-12 w-full border-red-400 bg-red-500/10 font-bold tracking-wide text-red-300 hover:bg-red-500/20 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center justify-center"
+              className="h-12 w-full border border-red-300 bg-red-500/10 font-bold tracking-wide text-red-300 hover:bg-red-500/20 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center justify-center"
             >
-              <Trash2 className="mr-2 h-5 w-5" />
+              <Trash2 className="mr-2 h-5 w-5 text-red-300" />
               Discard Workout
             </button>
           </motion.div>
