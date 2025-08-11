@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Dumbbell, ClipboardList, RotateCw, LogOut } from 'lucide-react'
 import { Button } from '../components/ui/button'
@@ -8,18 +8,110 @@ import { TemplateList } from '../components/Templates/TemplateList'
 import { CreateTemplateForm } from '../components/Templates/CreateTemplateForm'
 import { PreviousWorkoutList } from '../components/Templates/PreviousWorkoutList'
 import { Exercise, WorkoutTemplate, Workout } from '../types/workout'
+import { supabase } from '../lib/supabase'
 import ShimmerHeading from '../components/ShimmerHeading'
 
 type RecordPageView = 'options' | 'templates' | 'create-template' | 'previous-workouts' | 'workout'
 
+interface WorkoutStats {
+  currentStreak: number
+  lastWorkout: string | null
+  totalWorkouts: number
+}
+
 export const RecordPage: React.FC = () => {
-  const { signOut } = useAuth()
+  const { signOut, user } = useAuth()
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const [currentView, setCurrentView] = useState<RecordPageView>('options')
   const [workoutExercises, setWorkoutExercises] = useState<Exercise[]>([])
   const [workoutSource, setWorkoutSource] = useState<string>('')
   const [hasChosenWorkoutStart, setHasChosenWorkoutStart] = useState<boolean>(false)
   const [isFreshWorkout, setIsFreshWorkout] = useState<boolean>(false)
+  const [workoutStats, setWorkoutStats] = useState<WorkoutStats>({
+    currentStreak: 0,
+    lastWorkout: null,
+    totalWorkouts: 0
+  })
+  const [statsLoading, setStatsLoading] = useState(true)
+
+  // Fetch workout statistics
+  const fetchWorkoutStats = async () => {
+    if (!user) return
+
+    try {
+      setStatsLoading(true)
+      
+      // Fetch all workouts for the user, ordered by date
+      const { data: workouts, error } = await supabase
+        .from('workouts')
+        .select('date, exercises')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false })
+
+      if (error) throw error
+
+      if (workouts && workouts.length > 0) {
+        // Calculate total workouts
+        const totalWorkouts = workouts.length
+
+        // Get last workout info
+        const lastWorkout = workouts[0]
+        let lastWorkoutName = 'No exercises'
+        if (lastWorkout.exercises?.exercises && lastWorkout.exercises.exercises.length > 0) {
+          const exerciseNames = lastWorkout.exercises.exercises
+            .filter((ex: any) => ex.name && ex.name.trim())
+            .map((ex: any) => ex.name)
+            .slice(0, 2) // Take first 2 exercise names
+          lastWorkoutName = exerciseNames.join(' & ') || 'No exercises'
+        }
+
+        // Calculate current streak
+        let currentStreak = 0
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        
+        let currentDate = new Date(today)
+        
+        for (let i = 0; i < 365; i++) { // Check up to 1 year back
+          const dateStr = currentDate.toISOString().split('T')[0]
+          const hasWorkoutOnDate = workouts.some(workout => workout.date === dateStr)
+          
+          if (hasWorkoutOnDate) {
+            currentStreak++
+            currentDate.setDate(currentDate.getDate() - 1)
+          } else {
+            break
+          }
+        }
+
+        setWorkoutStats({
+          currentStreak,
+          lastWorkout: lastWorkoutName,
+          totalWorkouts
+        })
+      } else {
+        setWorkoutStats({
+          currentStreak: 0,
+          lastWorkout: null,
+          totalWorkouts: 0
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching workout stats:', error)
+      setWorkoutStats({
+        currentStreak: 0,
+        lastWorkout: null,
+        totalWorkouts: 0
+      })
+    } finally {
+      setStatsLoading(false)
+    }
+  }
+
+  // Fetch stats on component mount and when refreshTrigger changes
+  useEffect(() => {
+    fetchWorkoutStats()
+  }, [refreshTrigger, user])
 
   const handleWorkoutAdded = () => {
     setRefreshTrigger(prev => prev + 1)
@@ -237,9 +329,36 @@ export const RecordPage: React.FC = () => {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="mt-8 text-center"
         >
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            🔥 <span className="font-semibold text-brand-400">7-day streak</span> • Last: Chest & Triceps • 47 total workouts
-          </p>
+          {statsLoading ? (
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              Loading stats...
+            </p>
+          ) : (
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              {workoutStats.currentStreak > 0 ? (
+                <>
+                  🔥 <span className="font-semibold text-brand-400">{workoutStats.currentStreak}-day streak</span>
+                  {workoutStats.lastWorkout && (
+                    <> • Last: {workoutStats.lastWorkout}</>
+                  )}
+                  <> • {workoutStats.totalWorkouts} total workouts</>
+                </>
+              ) : (
+                <>
+                  {workoutStats.totalWorkouts > 0 ? (
+                    <>
+                      {workoutStats.lastWorkout && (
+                        <>Last: {workoutStats.lastWorkout} • </>
+                      )}
+                      {workoutStats.totalWorkouts} total workouts
+                    </>
+                  ) : (
+                    <>Start your fitness journey today!</>
+                  )}
+                </>
+              )}
+            </p>
+          )}
         </motion.div>
       </section>
     </main>
@@ -277,20 +396,11 @@ export const RecordPage: React.FC = () => {
       
       case 'previous-workouts':
         return (
-          <div>
-            <div className="view-header">
-              <button 
-                onClick={() => setCurrentView('options')} 
-                className="back-btn"
-              >
-                ← BACK TO OPTIONS
-              </button>
-            </div>
-            <PreviousWorkoutList
-              onSelectWorkout={handleStartFromPrevious}
-              refreshTrigger={refreshTrigger}
-            />
-          </div>
+          <PreviousWorkoutList
+            onSelectWorkout={handleStartFromPrevious}
+            refreshTrigger={refreshTrigger}
+            onBack={() => setCurrentView('options')}
+          />
         )
       
       case 'workout':

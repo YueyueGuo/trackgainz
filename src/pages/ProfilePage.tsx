@@ -136,7 +136,7 @@ export const ProfilePage: React.FC = () => {
         />
       </div>
 
-      <section className="relative z-10 mx-auto max-w-lg px-4 pt-6 pb-24">
+      <section className="relative z-10 mx-auto max-w-lg px-4 pt-6 pb-32">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -152,7 +152,7 @@ export const ProfilePage: React.FC = () => {
               <h1 className="bg-gradient-to-r from-brand-300 via-amber-300 to-brand-500 bg-clip-text text-2xl font-black uppercase tracking-tight text-transparent">
                 Profile
               </h1>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400">Your fitness journey</p>
+              <p className="text-md text-zinc-600 dark:text-zinc-400">Your fitness journey</p>
             </div>
           </div>
         </motion.div>
@@ -162,18 +162,11 @@ export const ProfilePage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
-          className="mb-6 rounded-2xl border border-[#5a3714]/70 bg-[linear-gradient(135deg,#2f1808_0%,#1a0f06_100%)] p-6 shadow-[0_20px_60px_-20px_rgba(255,153,0,0.5)]"
+          className="mb-6 rounded-2xl border border-[#5a3714]/70 bg-[linear-gradient(135deg,#2f1808_0%,#1a0f06_100%)] p-4 shadow-[0_20px_60px_-20px_rgba(255,153,0,0.5)]"
         >
           <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-[#ffb547]/10" />
 
           <div className="relative flex flex-col items-center">
-            <div className="relative mb-4">
-              <div className="h-24 w-24 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 p-1">
-                <div className="flex h-full w-full items-center justify-center rounded-full bg-[#2b1508] text-2xl font-bold text-amber-100">
-                  {name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
-                </div>
-              </div>
-            </div>
             <h2 className="text-xl font-bold text-amber-50">{name || 'User'}</h2>
             <p className="text-sm text-amber-100/70">{user?.email}</p>
           </div>
