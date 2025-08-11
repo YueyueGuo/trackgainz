@@ -317,12 +317,12 @@ export const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
             {/* Search */}
             <div className="relative p-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-900" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-800" />
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search exercises..."
-                  className="border-2 border-amber-400 bg-amber-300 pl-10 text-amber-900 placeholder:text-amber-700 focus-visible:ring-amber-500"
+                  className="!bg-white !text-gray-900 placeholder:!text-amber-800 border-2 border-amber-400 pl-10 focus-visible:ring-amber-500"
                   autoFocus
                 />
               </div>

@@ -236,14 +236,6 @@ export const WorkoutHistory: React.FC<WorkoutHistoryProps> = ({
               <p className="text-md text-zinc-600 dark:text-zinc-400">View your workout history</p>
             </div>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="border-zinc-700/50 bg-zinc-900/50 text-zinc-300 hover:bg-zinc-800/50"
-          >
-            <Filter className="h-4 w-4" />
-          </Button>
         </motion.div>
 
         {/* Quick Stats */}
@@ -279,12 +271,12 @@ export const WorkoutHistory: React.FC<WorkoutHistoryProps> = ({
           className="mb-6"
         >
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-900" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               placeholder="Search workouts..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="border-2 border-amber-400 bg-amber-300 pl-10 text-amber-900 placeholder:text-amber-700 focus-visible:ring-amber-500"
+              className="!border-slate-300 !bg-slate-50 !text-slate-900 placeholder:!text-slate-500 border-2 pl-10 focus-visible:!ring-slate-400 focus-visible:!border-slate-400"
             />
           </div>
         </motion.div>
@@ -296,7 +288,7 @@ export const WorkoutHistory: React.FC<WorkoutHistoryProps> = ({
           transition={{ delay: 0.3, duration: 0.5 }}
           className="space-y-4"
         >
-          <h2 className="text-lg font-bold uppercase tracking-wide text-amber-50">Recent Workouts</h2>
+          <h2 className="text-lg font-bold uppercase tracking-wide text-amber-400">Recent Workouts</h2>
 
           {filteredWorkouts.length === 0 && searchTerm ? (
             <div className="text-center py-8">
@@ -329,7 +321,7 @@ export const WorkoutHistory: React.FC<WorkoutHistoryProps> = ({
               variant="outline"
               onClick={handleLoadMore}
               disabled={loadingMore}
-              className="border-brand-400/30 bg-brand-500/10 text-brand-300 hover:bg-brand-500/20 disabled:opacity-50"
+              className="border-brand-400/30 !bg-brand-500 !text-white hover:bg-brand-500/20 disabled:opacity-50"
             >
               {loadingMore ? 'Loading...' : 'Load More Workouts'}
             </Button>

@@ -235,7 +235,7 @@ export const RecordPage: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="border-zinc-700/50 bg-zinc-900/50 text-zinc-300 hover:bg-zinc-800/50"
+              className="border-zinc-700/50 bg-zinc-200 text-zinc-500 hover:bg-zinc-800/50"
             >
               <LogOut className="h-4 w-4" />
             </Button>
