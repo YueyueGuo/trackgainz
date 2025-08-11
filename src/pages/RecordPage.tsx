@@ -368,21 +368,12 @@ export const RecordPage: React.FC = () => {
     switch (currentView) {
       case 'templates':
         return (
-          <div>
-            <div className="view-header">
-              <button 
-                onClick={() => setCurrentView('options')} 
-                className="back-btn"
-              >
-                ← BACK TO OPTIONS
-              </button>
-            </div>
-            <TemplateList
-              onSelectTemplate={handleStartFromTemplate}
-              onCreateTemplate={() => setCurrentView('create-template')}
-              refreshTrigger={refreshTrigger}
-            />
-          </div>
+          <TemplateList
+            onSelectTemplate={handleStartFromTemplate}
+            onCreateTemplate={() => setCurrentView('create-template')}
+            onBack={() => setCurrentView('options')}
+            refreshTrigger={refreshTrigger}
+          />
         )
       
       case 'create-template':

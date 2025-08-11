@@ -233,7 +233,7 @@ export const WorkoutHistory: React.FC<WorkoutHistoryProps> = ({
               <h1 className="bg-gradient-to-r from-brand-300 via-amber-300 to-brand-500 bg-clip-text text-2xl font-black uppercase tracking-tight text-transparent">
                 History
               </h1>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400">Your workout journey</p>
+              <p className="text-md text-zinc-600 dark:text-zinc-400">View your workout history</p>
             </div>
           </div>
           <Button

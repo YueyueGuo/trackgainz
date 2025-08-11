@@ -223,7 +223,7 @@ export const CreateTemplateForm: React.FC<CreateTemplateFormProps> = ({
           animate={{ opacity: 1, y: 0 }}
           className="mb-4 flex items-center justify-between"
         >
-          <Button variant="ghost" size="sm" className="text-amber-100" onClick={onCancel}>
+          <Button variant="ghost" size="sm" className="!text-slate-900" onClick={onCancel}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>

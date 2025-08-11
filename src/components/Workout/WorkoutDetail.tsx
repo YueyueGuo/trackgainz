@@ -102,7 +102,7 @@ export const WorkoutDetail: React.FC<WorkoutDetailProps> = ({
             variant="ghost" 
             size="sm" 
             onClick={onBack}
-            className="text-amber-100"
+            className="!text-slate-900"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back

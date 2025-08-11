@@ -145,7 +145,7 @@ export const PreviousWorkoutList: React.FC<PreviousWorkoutListProps> = ({
           transition={{ duration: 0.4, ease: "easeOut" }}
           className="mb-6 flex items-center justify-between"
         >
-          <Button variant="ghost" size="sm" className="text-amber-100" onClick={onBack}>
+          <Button variant="ghost" size="sm" className="!text-slate-900" onClick={onBack}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
@@ -166,12 +166,12 @@ export const PreviousWorkoutList: React.FC<PreviousWorkoutListProps> = ({
           className="mb-6"
         >
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-900" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               placeholder="Search workouts by exercise name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-2 border-amber-400 bg-amber-300 pl-10 text-amber-900 placeholder:text-amber-700 focus-visible:ring-amber-500"
+              className="border-2 border-slate-300 bg-slate-50 pl-10 text-slate-900 placeholder:text-slate-500 focus-visible:ring-slate-400 focus-visible:border-slate-400"
             />
           </div>
         </motion.div>

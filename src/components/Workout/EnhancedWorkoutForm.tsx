@@ -533,13 +533,13 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
         >
           <Button 
             type="button"
-            variant="outline" 
+            variant="ghost" 
             size="sm" 
             onClick={(e) => {
               e.stopPropagation()
               handleBack()
             }} 
-            className="text-amber-100 border-brand-700/50 bg-brand-500/10 hover:bg-brand-500/20"
+            className="!text-slate-900"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back

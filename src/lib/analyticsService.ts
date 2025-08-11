@@ -30,6 +30,19 @@ export interface ProgressStats {
   totalVolumeAllTime: number;
 }
 
+// Add this utility function at the top
+const filterCompleteWorkouts = (workouts: any[]) => {
+  return workouts.filter(workout => {
+    const hasExercises = workout.exercises?.exercises && 
+                        Array.isArray(workout.exercises.exercises) && 
+                        workout.exercises.exercises.length > 0;
+    const hasDuration = workout.duration && workout.duration > 0;
+    
+    // Must have both exercises AND duration to be a complete workout
+    return hasExercises && hasDuration;
+  });
+};
+
 export const analyticsService = {
   async getVolumeData(userId: string, days: number = 30): Promise<VolumeData[]> {
     const startDate = new Date();
@@ -37,7 +50,7 @@ export const analyticsService = {
 
     const { data: workouts, error } = await supabase
       .from('workouts')
-      .select('date, exercises')
+      .select('date, exercises, duration')
       .eq('user_id', userId)
       .gte('date', startDate.toISOString().split('T')[0])
       .order('date', { ascending: true });
@@ -47,9 +60,12 @@ export const analyticsService = {
       return [];
     }
 
+    // Apply the same filtering as used in PreviousWorkoutList
+    const completeWorkouts = filterCompleteWorkouts(workouts);
+
     const volumeMap = new Map<string, VolumeData>();
 
-    workouts.forEach(workout => {
+    completeWorkouts.forEach(workout => {
       if (!workout.exercises?.exercises) return;
 
       let dailyVolume = 0;
@@ -90,7 +106,7 @@ export const analyticsService = {
 
     const { data: workouts, error } = await supabase
       .from('workouts')
-      .select('date, exercises')
+      .select('date, exercises, duration')
       .eq('user_id', userId)
       .gte('date', startDate.toISOString().split('T')[0])
       .order('date', { ascending: true });
@@ -100,9 +116,12 @@ export const analyticsService = {
       return [];
     }
 
+    // Apply the same filtering as used in PreviousWorkoutList
+    const completeWorkouts = filterCompleteWorkouts(workouts);
+
     const weeklyData = new Map<string, WorkoutFrequency>();
 
-    workouts.forEach(workout => {
+    completeWorkouts.forEach(workout => {
       const date = new Date(workout.date);
       const weekStart = new Date(date);
       weekStart.setDate(date.getDate() - date.getDay()); // Start of week (Sunday)
@@ -140,7 +159,7 @@ export const analyticsService = {
   async getProgressStats(userId: string): Promise<ProgressStats> {
     const { data: workouts, error } = await supabase
       .from('workouts')
-      .select('date, exercises')
+      .select('date, exercises, duration')
       .eq('user_id', userId)
       .order('date', { ascending: true });
 
@@ -155,11 +174,14 @@ export const analyticsService = {
       };
     }
 
-    const totalWorkouts = workouts.length;
+    // Apply the same filtering as used in PreviousWorkoutList
+    const completeWorkouts = filterCompleteWorkouts(workouts);
+
+    const totalWorkouts = completeWorkouts.length;
     let totalVolumeAllTime = 0;
 
     // Calculate total volume
-    workouts.forEach(workout => {
+    completeWorkouts.forEach(workout => {
       if (workout.exercises?.exercises) {
         workout.exercises.exercises.forEach((exercise: any) => {
           if (exercise.sets) {
@@ -174,7 +196,7 @@ export const analyticsService = {
     });
 
     // Calculate streaks
-    const workoutDates = workouts.map(w => new Date(w.date)).sort((a, b) => a.getTime() - b.getTime());
+    const workoutDates = completeWorkouts.map(w => new Date(w.date)).sort((a, b) => a.getTime() - b.getTime());
     let currentStreak = 0;
     let longestStreak = 0;
     let tempStreak = 1;

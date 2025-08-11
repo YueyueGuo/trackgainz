@@ -146,7 +146,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
             onChange={(e) => handleNameChange(e.target.value)}
             onClick={onOpenExerciseSelector}
             placeholder="Exercise name (e.g., Bench Press)"
-            className="flex-1 border-[#6b3a0e] bg-[#241307] text-amber-50 placeholder:text-amber-200/60 cursor-pointer"
+            className="flex-1 border-2 border-slate-300 bg-slate-50 text-slate-900 placeholder:text-slate-500 focus-visible:ring-slate-400 focus-visible:border-slate-400 cursor-pointer"
             disabled={loading}
             readOnly={!name} // Make it read-only when empty to encourage using the selector
           />

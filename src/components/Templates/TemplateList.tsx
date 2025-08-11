@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Search, MoreHorizontal, Trash2 } from 'lucide-react'
+import { ArrowLeft, Plus, Search, MoreHorizontal, Trash2 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { WorkoutTemplate } from '../../types/workout'
@@ -10,12 +10,14 @@ import { Input } from '../ui/input'
 interface TemplateListProps {
   onSelectTemplate: (template: WorkoutTemplate) => void
   onCreateTemplate: () => void
+  onBack: () => void
   refreshTrigger: number
 }
 
 export const TemplateList: React.FC<TemplateListProps> = ({ 
   onSelectTemplate, 
   onCreateTemplate, 
+  onBack,
   refreshTrigger 
 }) => {
   const { user } = useAuth()
@@ -131,8 +133,12 @@ export const TemplateList: React.FC<TemplateListProps> = ({
           transition={{ duration: 0.4, ease: "easeOut" }}
           className="mb-6 flex items-center justify-between"
         >
-          <div>
-            <h1 className="bg-gradient-to-r from-brand-300 via-amber-300 to-brand-500 bg-clip-text text-2xl font-black uppercase tracking-tight text-transparent">
+          <Button variant="ghost" size="sm" className="!text-slate-900" onClick={onBack}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+          <div className="text-center">
+            <h1 className="bg-gradient-to-r from-brand-300 via-amber-300 to-brand-500 bg-clip-text text-xl font-black uppercase tracking-tight text-transparent">
               Templates
             </h1>
             <p className="text-xs text-slate-700 dark:text-slate-300">Your saved workout routines</p>
@@ -155,12 +161,12 @@ export const TemplateList: React.FC<TemplateListProps> = ({
           className="mb-6"
         >
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-900" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               placeholder="Search templates..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-2 border-amber-400 bg-amber-300 pl-10 text-amber-900 placeholder:text-amber-700 focus-visible:ring-amber-500"
+              className="border-2 border-slate-300 bg-slate-50 pl-10 text-slate-900 placeholder:text-slate-500 focus-visible:ring-slate-400 focus-visible:border-slate-400"
             />
           </div>
         </motion.div>
