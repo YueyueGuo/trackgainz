@@ -176,7 +176,7 @@ export const JSONBWorkoutList: React.FC<JSONBWorkoutListProps> = ({ refreshTrigg
                             Set {setIndex + 1}: {set.weight}lbs × {set.reps} reps
                           </span>
                           <span className="set-badges">
-                            {set.type !== 'regular' && (
+                            {set.type !== 'working' && (
                               <span className={`type-badge ${set.type}`}>
                                 {set.type === 'warmup' ? 'W' : 'F'}
                               </span>

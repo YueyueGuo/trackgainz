@@ -1,9 +1,16 @@
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { ArrowLeft, Save, Trash2, Plus } from 'lucide-react'
+import { Button } from '../ui/button'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { useUnits } from '../../contexts/UnitContext'
 import { Exercise, WorkoutSet, SetType } from '../../types/workout'
 import { ExerciseSelector } from './ExerciseSelector'
+import { WorkoutTimer } from './WorkoutTimer'
+import { WorkoutCelebration } from './WorkoutCelebration'
+import { ExerciseCard } from './ExerciseCard'
+import { DiscardWorkoutModal } from './DiscardWorkoutModal'
 
 interface EnhancedWorkoutFormProps {
   onWorkoutAdded: () => void
@@ -12,11 +19,6 @@ interface EnhancedWorkoutFormProps {
   isFreshWorkout?: boolean // true when starting a fresh workout
 }
 
-const SET_TYPE_CONFIG = {
-  regular: { symbol: 'W/F', label: 'Set Type' },
-  warmup: { symbol: 'W', label: 'Warm Up' },
-  failure: { symbol: 'F', label: 'To Failure' }
-}
 
 export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({ 
   onWorkoutAdded, 
@@ -26,29 +28,48 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
 }) => {
   const { user } = useAuth()
   const { weightUnit } = useUnits()
-  const [exercises, setExercises] = useState<Exercise[]>(initialExercises)
+  // Utility to ensure all exercises and sets have IDs for backwards compatibility
+  const ensureIds = (exercises: Exercise[]): Exercise[] => {
+    return exercises.map((exercise, exIndex) => ({
+      ...exercise,
+      id: exercise.id || `ex-${Date.now()}-${exIndex}`,
+      sets: exercise.sets.map((set, setIndex) => ({
+        ...set,
+        id: set.id || `${exercise.id || `ex-${Date.now()}-${exIndex}`}-${setIndex}`,
+        type: ((set.type as any) === 'regular' ? 'working' : set.type) as SetType // Handle old 'regular' type
+      }))
+    }))
+  }
+
+  const [exercises, setExercises] = useState<Exercise[]>(ensureIds(initialExercises))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [showHelp, setShowHelp] = useState(false)
   const [workoutStartTime, setWorkoutStartTime] = useState<Date | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [timerState, setTimerState] = useState<'inactive' | 'active' | 'paused'>('inactive')
   const [pausedAt, setPausedAt] = useState<Date | null>(null)
   const [showExerciseSelector, setShowExerciseSelector] = useState(false)
   const [editingExerciseIndex, setEditingExerciseIndex] = useState<number | null>(null)
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [showDiscardModal, setShowDiscardModal] = useState(false)
 
   // Auto-add empty exercise for fresh workouts
   React.useEffect(() => {
     if (isFreshWorkout && exercises.length === 0) {
-      const newExercise: Exercise = {
-        name: '',
-        sets: [
-          { weight: 0, reps: 0, type: 'regular', completed: false },
-          { weight: 0, reps: 0, type: 'regular', completed: false },
-          { weight: 0, reps: 0, type: 'regular', completed: false }
-        ]
-      }
-      setExercises([newExercise])
+      // Create 3 blank exercise cards by default
+      const newExercises: Exercise[] = Array.from({ length: 3 }, (_, index) => {
+        const exerciseId = `${Date.now()}-${index}`
+        return {
+          id: exerciseId,
+          name: '',
+          sets: [
+            { id: `${exerciseId}-1`, weight: 0, reps: 0, type: 'working', completed: false },
+            { id: `${exerciseId}-2`, weight: 0, reps: 0, type: 'working', completed: false },
+            { id: `${exerciseId}-3`, weight: 0, reps: 0, type: 'working', completed: false }
+          ]
+        }
+      })
+      setExercises(newExercises)
     }
   }, [isFreshWorkout, exercises.length])
 
@@ -109,6 +130,76 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
     }
   }
 
+  // Discard workout handler
+  const handleDiscardWorkout = () => {
+    // Reset all workout state
+    setExercises([])
+    setWorkoutStartTime(null)
+    setElapsedTime(0)
+    setTimerState('inactive')
+    setPausedAt(null)
+    setShowDiscardModal(false)
+    onWorkoutAdded() // This navigates back to the record options
+  }
+
+  // New handlers to match reference code structure
+  const handleUpdateExerciseName = (exerciseId: string, newName: string) => {
+    setExercises(prev => prev.map(ex => 
+      ex.id === exerciseId ? { ...ex, name: newName } : ex
+    ))
+  }
+
+  const handleUpdateSet = (exerciseId: string, setId: string, updates: any) => {
+    setExercises(prev =>
+      prev.map(ex =>
+        ex.id === exerciseId
+          ? {
+              ...ex,
+              sets: ex.sets.map(set => 
+                set.id === setId ? { ...set, ...updates } : set
+              ),
+            }
+          : ex,
+      ),
+    )
+  }
+
+  const handleAddNote = (exerciseId: string, note: string) => {
+    setExercises(prev => prev.map(ex => 
+      ex.id === exerciseId ? { ...ex, note } : ex
+    ))
+  }
+
+  const handleAddSet = (exerciseId: string) => {
+    const newSet = {
+      id: `${exerciseId}-${Date.now()}`,
+      weight: 0,
+      reps: 0,
+      completed: false,
+      type: "working" as const,
+    }
+    setExercises(prev =>
+      prev.map(ex => ex.id === exerciseId ? { ...ex, sets: [...ex.sets, newSet] } : ex),
+    )
+  }
+
+  const handleRemoveSet = (exerciseId: string, setId: string) => {
+    setExercises(prev =>
+      prev.map(ex =>
+        ex.id === exerciseId
+          ? {
+              ...ex,
+              sets: ex.sets.filter(set => set.id !== setId),
+            }
+          : ex,
+      ),
+    )
+  }
+
+  const handleRemoveExercise = (exerciseId: string) => {
+    setExercises(prev => prev.filter(ex => ex.id !== exerciseId))
+  }
+
   // Delete/Cancel workout function
   const cancelWorkout = () => {
     if (window.confirm('Are you sure you want to cancel this workout? All progress will be lost.')) {
@@ -167,15 +258,76 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
+  // Check if there's actual workout data entered
+  const hasWorkoutData = () => {
+    return exercises.some(exercise => {
+      // Check if exercise has a name
+      if (!exercise.name.trim()) return false
+      
+      // Check if exercise has any sets with meaningful data (weight > 0 or reps > 0)
+      return exercise.sets.some(set => set.weight > 0 || set.reps > 0)
+    })
+  }
+
+  // Handle back navigation
+  const handleBack = () => {
+    // Only show confirmation if there's actual workout data
+    if (hasWorkoutData()) {
+      if (window.confirm('Are you sure you want to go back? Your workout progress will be lost.')) {
+        // Navigate back to Record page options
+        onWorkoutAdded()
+      }
+    } else {
+      // No meaningful data, navigate back without confirmation
+      onWorkoutAdded()
+    }
+  }
+
+  // Handle timer toggle
+  const handleTimerToggle = () => {
+    if (timerState === 'active') {
+      pauseTimer()
+    } else if (timerState === 'paused') {
+      resumeTimer()
+    }
+  }
+
+  // Handle celebration completion
+  const handleCelebrationComplete = () => {
+    setShowCelebration(false)
+    // Reset form and timer
+    setExercises([])
+    setWorkoutStartTime(null)
+    setElapsedTime(0)
+    setTimerState('inactive')
+    setPausedAt(null)
+    onWorkoutAdded()
+  }
+
+  // Calculate workout stats for celebration
+  const getWorkoutStats = () => {
+    const totalSets = exercises.reduce((acc, ex) => acc + ex.sets.length, 0)
+    const totalVolume = exercises.reduce((acc, ex) => 
+      acc + ex.sets.reduce((setAcc, set) => setAcc + (set.weight * set.reps), 0), 0
+    ) / 1000 // Convert to thousands
+
+    return {
+      duration: formatElapsedTime(elapsedTime),
+      exercises: exercises.filter(ex => ex.name.trim()).length,
+      totalSets,
+      totalVolume: Math.round(totalVolume * 10) / 10 // Round to 1 decimal
+    }
+  }
+
   const addExercise = () => {
     // Auto-start timer when first exercise is added
     startTimerIfNeeded()
     const newExercise: Exercise = {
       name: '',
       sets: [
-        { weight: 0, reps: 0, type: 'regular', completed: false },
-        { weight: 0, reps: 0, type: 'regular', completed: false },
-        { weight: 0, reps: 0, type: 'regular', completed: false }
+        { weight: 0, reps: 0, type: 'working', completed: false },
+        { weight: 0, reps: 0, type: 'working', completed: false },
+        { weight: 0, reps: 0, type: 'working', completed: false }
       ]
     }
     setExercises([...exercises, newExercise])
@@ -183,6 +335,31 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
 
   const removeExercise = (exerciseIndex: number) => {
     setExercises(exercises.filter((_, i) => i !== exerciseIndex))
+  }
+
+  const moveExercise = (exerciseIndex: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && exerciseIndex > 0) {
+      const newExercises = [...exercises]
+      const temp = newExercises[exerciseIndex]
+      newExercises[exerciseIndex] = newExercises[exerciseIndex - 1]
+      newExercises[exerciseIndex - 1] = temp
+      setExercises(newExercises)
+    } else if (direction === 'down' && exerciseIndex < exercises.length - 1) {
+      const newExercises = [...exercises]
+      const temp = newExercises[exerciseIndex]
+      newExercises[exerciseIndex] = newExercises[exerciseIndex + 1]
+      newExercises[exerciseIndex + 1] = temp
+      setExercises(newExercises)
+    }
+  }
+
+  const updateExerciseNote = (exerciseIndex: number, note: string) => {
+    const updatedExercises = [...exercises]
+    updatedExercises[exerciseIndex] = {
+      ...updatedExercises[exerciseIndex],
+      note: note.trim()
+    }
+    setExercises(updatedExercises)
   }
 
   const updateExerciseName = (exerciseIndex: number, name: string) => {
@@ -199,7 +376,8 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
     setExercises(updatedExercises)
   }
 
-  const openExerciseSelector = (exerciseIndex: number) => {
+  const openExerciseSelector = (exerciseId: string) => {
+    const exerciseIndex = exercises.findIndex(ex => ex.id === exerciseId)
     setEditingExerciseIndex(exerciseIndex)
     setShowExerciseSelector(true)
   }
@@ -220,7 +398,7 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
   const addSet = (exerciseIndex: number) => {
     const updated = exercises.map((exercise, i) => {
       if (i === exerciseIndex) {
-        const newSet: WorkoutSet = { weight: 0, reps: 0, type: 'regular', completed: false }
+        const newSet: WorkoutSet = { weight: 0, reps: 0, type: 'working', completed: false }
         return { ...exercise, sets: [...exercise.sets, newSet] }
       }
       return exercise
@@ -283,7 +461,7 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
 
   const cycleSetType = (exerciseIndex: number, setIndex: number) => {
     const currentType = exercises[exerciseIndex].sets[setIndex].type
-    const typeOrder: SetType[] = ['regular', 'warmup', 'failure']
+    const typeOrder: SetType[] = ['working', 'warmup', 'failure']
     const currentIndex = typeOrder.indexOf(currentType)
     const nextType = typeOrder[(currentIndex + 1) % typeOrder.length]
     
@@ -297,7 +475,7 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user) return
+    if (!user || loading || showCelebration) return
 
     setLoading(true)
     setError('')
@@ -324,13 +502,8 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
 
       if (workoutError) throw workoutError
 
-      // Reset form and timer
-      setExercises([])
-      setWorkoutStartTime(null)
-      setElapsedTime(0)
-      setTimerState('inactive')
-      setPausedAt(null)
-      onWorkoutAdded()
+      // Show celebration before completing
+      setShowCelebration(true)
     } catch (error: any) {
       setError(error.message)
     } finally {
@@ -338,114 +511,76 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
     }
   }
 
-  // Update the status legend to show gray checkmark for incomplete
-  const renderStatusLegend = () => (
-    <div className="status-legend">
-      <div className="legend-item completion-status">
-        <div className="legend-symbol default">W/F</div>
-        <span className="legend-label">Default</span>
-        <span className="legend-separator">|</span>
-        <div className="legend-symbol warmup">W</div>
-        <span className="legend-label">Warm-up</span>
-        <span className="legend-separator">|</span>
-        <div className="legend-symbol failure">F</div>
-        <span className="legend-label">Failure</span>
-      </div>
-      <div className="legend-item completion-status">
-        <div className="legend-symbol default-checkbox">✓</div>
-        <span className="legend-label">Incomplete</span>
-        <span className="legend-separator">|</span>
-        <div className="legend-symbol completed">✓</div>
-        <span className="legend-label">Completed</span>
-      </div>
-      <div className="legend-note">
-        Tap buttons to change set type or mark as completed
-      </div>
-    </div>
-  );
 
   return (
-    <div className="enhanced-workout-form-container">
-      {!isFreshWorkout && (
-        <div className="enhanced-workout-header">
-          <div className="workout-header-info">
-            <h2>LOG WORKOUT</h2>
-            {workoutSource && (
-              <p className="workout-source">Based on: {workoutSource}</p>
-            )}
-            <p>{workoutStartTime ? 'Workout in progress' : 'Track your sets in real-time'}</p>
-          </div>
-          
-          {exercises.length > 0 && (
-            <button
-              type="button"
-              onClick={saveAsTemplate}
-              className="save-template-btn"
-              disabled={loading}
-            >
-              SAVE AS TEMPLATE
-            </button>
-          )}
-        </div>
-      )}
+    <main className="relative min-h-screen overflow-hidden bg-slate-50 dark:bg-transparent">
+      {/* Background */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 dark:hidden bg-[radial-gradient(1000px_500px_at_-10%_-10%,theme(colors.brand.200/.25),transparent_60%),radial-gradient(800px_400px_at_110%_10%,theme(colors.brand.300/.18),transparent_60%),linear-gradient(180deg,theme(colors.white),theme(colors.slate.50))]" />
+        <div className="animate-blob absolute -top-24 -left-16 h-64 w-64 rounded-full bg-brand-500/14 blur-3xl will-change-transform" />
+        <div
+          className="animate-blob absolute -bottom-24 -right-10 h-72 w-72 rounded-full bg-amber-400/14 blur-3xl will-change-transform"
+          style={{ animationDelay: "2s" }}
+        />
+      </div>
 
-      {isFreshWorkout && exercises.length > 0 && (
-        <div className="enhanced-workout-header">
-          <div className="workout-header-info">
-            {workoutStartTime && (
-              <p>{workoutStartTime ? 'Workout in progress' : ''}</p>
-            )}
-          </div>
-          
-          <button
+      <section className="relative z-10 mx-auto max-w-lg px-4 pt-6 pb-24">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 flex items-center justify-between"
+        >
+          <Button 
             type="button"
-            onClick={saveAsTemplate}
-            className="save-template-btn"
-            disabled={loading}
+            variant="ghost" 
+            size="sm" 
+            onClick={(e) => {
+              e.stopPropagation()
+              handleBack()
+            }} 
+            className="!text-slate-900"
           >
-            SAVE AS TEMPLATE
-          </button>
-        </div>
-      )}
-        
-      {workoutStartTime && (
-          <div className="workout-timer">
-            <div className="timer-info">
-              <span className="timer-label">WORKOUT TIME:</span>
-              <span className="timer-display">{formatElapsedTime(elapsedTime)}</span>
-              <span className={`timer-status ${timerState}`}>
-                {timerState === 'active' ? 'ACTIVE' : timerState === 'paused' ? 'PAUSED' : ''}
-              </span>
-            </div>
-            <div className="timer-controls">
-              {timerState === 'active' && (
-                <button
-                  type="button"
-                  onClick={pauseTimer}
-                  className="timer-control-btn pause-btn"
-                >
-                  PAUSE
-                </button>
-              )}
-              {timerState === 'paused' && (
-                <>
-                  <button
-                    type="button"
-                    onClick={resumeTimer}
-                    className="timer-control-btn resume-btn"
-                  >
-                    RESUME
-                  </button>
-                  <button
-                    type="button"
-                    onClick={cancelWorkout}
-                    className="timer-control-btn cancel-btn"
-                  >
-                    DELETE
-                  </button>
-                </>
-              )}
-            </div>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+          <h1 className="bg-gradient-to-r from-brand-300 via-amber-300 to-brand-500 bg-clip-text text-xl font-black uppercase tracking-tight text-transparent">
+            {isFreshWorkout ? 'Fresh Workout' : (workoutSource ? 'Workout Active' : 'Log Workout')}
+          </h1>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-red-400/30 bg-red-500/10 text-red-300 hover:bg-red-500/20"
+              onClick={() => setShowDiscardModal(true)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+            <Button 
+              size="sm" 
+              className="bg-brand-500 hover:bg-brand-600" 
+              onClick={(e) => {
+                e.stopPropagation()
+                if (!loading && !showCelebration) {
+                  handleSubmit(e)
+                }
+              }} 
+              disabled={loading || exercises.length === 0 || showCelebration}
+            >
+              <Save className="mr-2 h-4 w-4" />
+              Finish
+            </Button>
+          </div>
+        </motion.div>
+
+        {/* Timer */}
+        {workoutStartTime && (
+          <div className="mb-6">
+            <WorkoutTimer 
+              seconds={elapsedTime}
+              isActive={timerState === 'active'}
+              onToggle={handleTimerToggle}
+            />
           </div>
         )}
 
@@ -464,158 +599,94 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
         )}
 
         {exercises.length === 0 ? (
-          <div className="empty-workout-state">
-            <h3>NO EXERCISES ADDED</h3>
-            <p>Add your first exercise to start tracking your workout</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 rounded-2xl border border-brand-800/50 bg-gradient-to-b from-brand-950/80 to-brand-900/80 p-8 text-center"
+          >
+            <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-brand-400/10" />
+            <h3 className="mb-2 bg-gradient-to-r from-brand-300 to-amber-300 bg-clip-text text-lg font-black uppercase tracking-tight text-transparent">
+              NO EXERCISES ADDED
+            </h3>
+            <p className="text-amber-100/60">Add your first exercise to start tracking your workout</p>
+          </motion.div>
         ) : (
-          exercises.map((exercise, exerciseIndex) => (
-            <div key={exerciseIndex} className="enhanced-exercise-section">
-              <div className="enhanced-exercise-header">
-                <input
-                  type="text"
-                  value={exercise.name.toUpperCase()}
-                  onChange={(e) => updateExerciseName(exerciseIndex, e.target.value)}
-                  onFocus={() => openExerciseSelector(exerciseIndex)}
-                  placeholder="EXERCISE NAME (E.G., BENCH PRESS)"
-                  disabled={loading}
-                  className="enhanced-exercise-name-input"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeExercise(exerciseIndex)}
-                  className="enhanced-remove-exercise-btn"
-                  disabled={loading}
-                  title="Remove Exercise"
-                >
-                  REMOVE
-                </button>
-              </div>
-              
-              <div className="enhanced-sets-container">
-                <div className="enhanced-sets-header">
-                  <h4>SET</h4>
-                  <h4>WEIGHT ({weightUnit.toUpperCase()})</h4>
-                  <h4>REPS</h4>
-                  <h4>TYPE & STATUS</h4>
-                  <button
-                    type="button"
-                    onClick={() => setShowHelp(!showHelp)}
-                    className="help-btn"
-                    title="Help"
-                  >
-                    ?
-                  </button>
-                </div>
-                
-                {showHelp && renderStatusLegend()}
-                
-                {exercise.sets.map((set, setIndex) => (
-                  <div 
-                    key={setIndex} 
-                    className={`enhanced-set-row type-${set.type} ${set.completed ? 'completed' : ''}`}
-                  >
-                    <span className="enhanced-set-number">{setIndex + 1}</span>
-                    
-                    <input
-                      type="number"
-                      value={set.weight || ''}
-                      onChange={(e) => {
-                        const rawValue = e.target.value
-                        const parsedValue = rawValue === '' ? 0 : parseFloat(rawValue)
-                        updateSet(exerciseIndex, setIndex, 'weight', parsedValue)
-                      }}
-                      placeholder="0"
-                      disabled={loading}
-                      min="0"
-                      step="0.25"
-                      className="enhanced-set-input"
-                    />
-                    
-                    <input
-                      type="number"
-                      value={set.reps || ''}
-                      onChange={(e) => {
-                        const rawValue = e.target.value
-                        const parsedValue = rawValue === '' ? 0 : parseInt(rawValue)
-                        updateSet(exerciseIndex, setIndex, 'reps', parsedValue)
-                      }}
-                      placeholder="0"
-                      disabled={loading}
-                      min="0"
-                      step="1"
-                      className="enhanced-set-input"
-                    />
-                    
-                    <div className="enhanced-set-actions">
-                      <button
-                        type="button"
-                        onClick={() => cycleSetType(exerciseIndex, setIndex)}
-                        className={`enhanced-type-btn type-${set.type}`}
-                        disabled={loading}
-                        title={SET_TYPE_CONFIG[set.type].label}
-                      >
-                        {SET_TYPE_CONFIG[set.type].symbol}
-                      </button>
-                      
-                      <button
-                        type="button"
-                        onClick={() => toggleSetCompletion(exerciseIndex, setIndex)}
-                        className={`enhanced-complete-btn ${set.completed ? 'completed' : ''}`}
-                        disabled={loading}
-                        title={set.completed ? 'Completed' : 'Mark Complete'}
-                      >
-                        ✓
-                      </button>
-                      
-                      {exercise.sets.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeSet(exerciseIndex, setIndex)}
-                          className="enhanced-remove-set-btn"
-                          disabled={loading}
-                          title="Remove Set"
-                        >
-                          ×
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-                
-                <button
-                  type="button"
-                  onClick={() => addSet(exerciseIndex)}
-                  className="enhanced-add-set-btn"
-                  disabled={loading}
-                >
-                  ADD SET
-                </button>
-              </div>
-            </div>
-          ))
+          <div className="space-y-4">
+            {exercises.map((exercise) => (
+              <ExerciseCard
+                key={exercise.id}
+                {...exercise}
+                onUpdateName={(newName) => handleUpdateExerciseName(exercise.id!, newName)}
+                onAddSet={() => handleAddSet(exercise.id!)}
+                onUpdateSet={(setId, updates) => handleUpdateSet(exercise.id!, setId, updates)}
+                onRemoveSet={(setId) => handleRemoveSet(exercise.id!, setId)}
+                onAddNote={(note) => handleAddNote(exercise.id!, note)}
+                onOpenExerciseSelector={() => openExerciseSelector(exercise.id!)}
+                onRemove={() => handleRemoveExercise(exercise.id!)}
+              />
+            ))}
+          </div>
         )}
         
-        <div className="enhanced-form-actions">
-          <button
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-6 space-y-4"
+        >
+          <Button
             type="button"
-            onClick={addExercise}
-            className="enhanced-add-exercise-btn"
+            onClick={(e) => {
+              e.stopPropagation()
+              addExercise()
+            }}
+            className="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3"
             disabled={loading}
           >
+            <Plus className="mr-2 h-5 w-5" />
             ADD EXERCISE
-          </button>
-          
-          {exercises.length > 0 && exercises.some(ex => ex.name.trim()) && (
-            <button
-              type="submit"
-              className="enhanced-submit-workout-btn"
-              disabled={loading}
+          </Button>
+        </motion.div>
+
+        {/* Bottom Action Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-8 space-y-3"
+        >
+          {/* Save and Finish Button */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation()
+                if (!loading && !showCelebration) {
+                  handleSubmit(e)
+                }
+              }}
+              size="lg"
+              className="group relative h-12 w-full overflow-hidden bg-brand-500 font-bold tracking-wide text-white shadow-[0_20px_40px_-20px_rgba(255,153,0,0.8)] hover:bg-brand-600"
+              disabled={loading || exercises.length === 0 || showCelebration}
             >
-              COMPLETE WORKOUT
+              <span className="relative z-10 flex items-center">
+                <Save className="mr-2 h-5 w-5" />
+                Save and Finish Workout
+              </span>
+              <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.28),transparent)] transition-transform duration-1000 group-hover:translate-x-full" />
+            </Button>
+          </motion.div>
+
+          {/* Discard Workout Button */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <button
+              type="button"
+              onClick={() => setShowDiscardModal(true)}
+              className="h-12 w-full border-red-400 bg-red-500/10 font-bold tracking-wide text-red-300 hover:bg-red-500/20 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center justify-center"
+            >
+              <Trash2 className="mr-2 h-5 w-5" />
+              Discard Workout
             </button>
-          )}
-        </div>
+          </motion.div>
+        </motion.div>
       </form>
       
       {showExerciseSelector && (
@@ -625,6 +696,19 @@ export const EnhancedWorkoutForm: React.FC<EnhancedWorkoutFormProps> = ({
           currentExerciseName={editingExerciseIndex !== null ? exercises[editingExerciseIndex]?.name.toUpperCase() : undefined}
         />
       )}
-    </div>
+      </section>
+
+      <WorkoutCelebration
+        show={showCelebration}
+        onComplete={handleCelebrationComplete}
+        workoutStats={getWorkoutStats()}
+      />
+
+      <DiscardWorkoutModal
+        isOpen={showDiscardModal}
+        onClose={() => setShowDiscardModal(false)}
+        onConfirm={handleDiscardWorkout}
+      />
+    </main>
   )
 }

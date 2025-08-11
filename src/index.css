@@ -1,13 +1,23 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+/* My custom component classes */
+@layer components {
+  .btn-brutalist {
+    @apply font-mono font-bold uppercase tracking-wide border-2 border-black shadow-brutalist transition-all duration-200 rounded cursor-pointer;
+  }
+  
+  .btn-brutalist:hover {
+    @apply transform -translate-x-0.5 -translate-y-0.5 shadow-brutalist-lg;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-white;
+  }
+  
+  .btn-primary:hover {
+    @apply bg-secondary;
+  }
 }

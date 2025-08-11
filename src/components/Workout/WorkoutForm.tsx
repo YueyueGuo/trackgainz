@@ -192,7 +192,7 @@ export const WorkoutForm: React.FC<WorkoutFormProps> = ({ onWorkoutAdded }) => {
 
         <button 
           type="submit" 
-          className="submit-workout-btn"
+          className="btn-brutalist btn-success px-6 py-4 w-full"
           disabled={loading || !workoutName.trim()}
         >
           {loading ? 'SAVING...' : 'SAVE WORKOUT'}

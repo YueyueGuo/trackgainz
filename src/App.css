@@ -4719,7 +4719,6 @@ body {
   .enhanced-type-btn {
     font-size: 0.5rem;
   }
-
   .enhanced-complete-btn {
     font-size: 0.6rem;
   }
@@ -5916,7 +5915,6 @@ body {
   color: white;
   border-color: #FF8C00;
 }
-
 .custom-exercise-actions {
   display: flex;
   gap: 10px;
@@ -6050,3 +6048,143 @@ body {
     border-color: #FF8C00;
   }
 }
+
+.exercise-list {
+  padding: 5px;
+}
+
+.exercise-item {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #eee;
+  padding: 4px 8px;
+  margin-bottom: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.exercise-item:hover {
+  border-color: var(--primary);
+  background: rgba(255, 140, 0, 0.1);
+}
+
+.exercise-info h4 {
+  margin: 0 0 2px 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--dark);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.exercise-details {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.muscle-groups {
+  background: var(--dark);
+  color: white;
+  padding: 1px 4px;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.exercise-list {
+  padding: 3px;
+}
+
+/* Mobile responsive styles for exercise selector */
+@media (max-width: 768px) {
+  .exercise-list {
+    padding: 3px;
+  }
+  
+  .exercise-item {
+    padding: 3px 6px;
+  }
+  
+  .exercise-info h4 {
+    font-size: 0.8rem;
+    margin: 0 0 1px 0;
+  }
+  
+  .exercise-details {
+    gap: 6px;
+  }
+}
+
+/* Override muscle-groups box styling for exercise selector */
+.exercise-item .muscle-groups {
+  background: none !important;
+  color: #666 !important;
+  border: none !important;
+  padding: 0 !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.2px !important;
+  font-style: italic !important;
+}
+
+/* Reorder button styles */
+.enhanced-move-up-btn,
+.enhanced-move-down-btn {
+  background: #FF8C00;
+  color: white;
+  border: 2px solid #000;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  width: 80px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.enhanced-move-up-btn:hover,
+.enhanced-move-down-btn:hover {
+  background: #E67E00;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
+}
+
+.enhanced-move-up-btn:disabled,
+.enhanced-move-down-btn:disabled {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.exercise-action-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Mobile responsive styles for reorder buttons */
+@media (max-width: 768px) {
+  .enhanced-move-up-btn,
+  .enhanced-move-down-btn {
+    width: 70px;
+    height: 32px;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+  
+  .exercise-action-buttons {
+    gap: 8px;
+  }
+}
+

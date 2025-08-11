@@ -138,7 +138,7 @@ export const WorkoutList: React.FC<WorkoutListProps> = ({ refreshTrigger }) => {
                 </span>
                 <button
                   onClick={() => deleteWorkout(workout.id)}
-                  className="delete-btn"
+                  className="btn-brutalist btn-danger px-3 py-2 text-sm"
                 >
                   DELETE
                 </button>
